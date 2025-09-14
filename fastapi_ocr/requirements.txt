@@ -1,0 +1,17 @@
+fastapi>=0.68.0,<0.69.0
+uvicorn>=0.15.0,<0.16.0
+python-multipart
+numpy
+opencv-python-headless
+pytesseract
+pdf2image
+python-jose[cryptography]
+passlib[bcrypt]
+pydantic[email]
+celery
+redis
+python-dotenv
+requests
+aiohttp
+tenacity
+prometheus-fastapi-instrumentator

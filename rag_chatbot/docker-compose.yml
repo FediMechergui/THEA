@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./app:/app/app
+      - ./data:/app/data
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - NODE_BACKEND_URL=http://nodejs-backend:3000
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - DATABASE_URL=postgresql://user:password@postgres:5432/thea
+      - MODEL_PATH=/app/models
+    depends_on:
+      - redis
+      - postgres
+      - vector_store
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: celery -A app.worker.celery worker --loglevel=info
+    volumes:
+      - ./app:/app/app
+      - ./data:/app/data
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - NODE_BACKEND_URL=http://nodejs-backend:3000
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - DATABASE_URL=postgresql://user:password@postgres:5432/thea
+      - MODEL_PATH=/app/models
+    depends_on:
+      - redis
+      - postgres
+      - vector_store
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  postgres:
+    image: postgres:13-alpine
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=thea
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  vector_store:
+    image: chromadb/chroma:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - vector_store_data:/chroma/data
+
+volumes:
+  postgres_data:
+  vector_store_data:
+
+networks:
+  default:
+    external: true
+    name: thea-network

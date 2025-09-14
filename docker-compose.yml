@@ -1,0 +1,186 @@
+services:
+  # Node.js Backend
+  nodejs-backend:
+    build:
+      context: ./nodejs_backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./nodejs_backend/.env.docker
+    depends_on:
+      - mysql
+      - redis
+      - rabbitmq
+      - minio
+
+  # FastAPI OCR Service
+  fastapi-ocr:
+    build:
+      context: ./fastapi_ocr
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./fastapi_ocr/.env.docker
+    volumes:
+      - ./fastapi_ocr/uploads:/app/uploads
+    depends_on:
+      - redis
+      - minio
+
+  fastapi-ocr-worker:
+    build:
+      context: ./fastapi_ocr
+      dockerfile: Dockerfile
+    command: celery -A app.services.celery_app worker --loglevel=info
+    env_file:
+      - ./fastapi_ocr/.env.docker
+    volumes:
+      - ./fastapi_ocr/uploads:/app/uploads
+    depends_on:
+      - redis
+
+  # RAG Chatbot Service
+  rag-chatbot:
+    build:
+      context: ./rag_chatbot
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    env_file:
+      - ./rag_chatbot/.env.docker
+    volumes:
+      - ./rag_chatbot/data:/app/data
+    depends_on:
+      - redis
+      - postgres
+      - vector_store
+      - mysql
+      - ollama
+
+  rag-chatbot-worker:
+    build:
+      context: ./rag_chatbot
+      dockerfile: Dockerfile
+    command: celery -A app.services.celery_app worker --loglevel=info
+    env_file:
+      - ./rag_chatbot/.env.docker
+    volumes:
+      - ./rag_chatbot/data:/app/data
+    depends_on:
+      - redis
+      - postgres
+      - vector_store
+      - mysql
+      - ollama
+
+  # Shared Infrastructure Services
+  mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=thea_db
+      - MYSQL_USER=thea_user
+      - MYSQL_PASSWORD=thea_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  minio:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    command: server /data --console-address ":9001"
+
+  postgres:
+    image: postgres:13-alpine
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=thea
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  vector_store:
+    image: chromadb/chroma:latest
+    ports:
+      - "8010:8000"
+    volumes:
+      - vector_store_data:/chroma/data
+
+  # Ollama LLM Service
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+    restart: unless-stopped
+
+  # Monitoring Services
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3010:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+
+volumes:
+  mysql_data:
+  redis_data:
+  rabbitmq_data:
+  minio_data:
+  postgres_data:
+  vector_store_data:
+  ollama_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  default:
+    name: thea-network

@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  # Initialize Ollama models
+  ollama-setup:
+    image: ollama/ollama:latest
+    depends_on:
+      - ollama
+    command: >
+      sh -c "
+        echo 'Waiting for Ollama to be ready...';
+        until curl -f http://ollama:11434/api/version >/dev/null 2>&1; do
+          sleep 5;
+          echo 'Still waiting for Ollama...';
+        done;
+        echo 'Ollama is ready. Pulling models...';
+        ollama pull llama2;
+        ollama pull llama2:7b-chat;
+        echo 'Models pulled successfully!';
+      "
+    restart: "no"
