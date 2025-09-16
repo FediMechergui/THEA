@@ -9,10 +9,14 @@ services:
     env_file:
       - ./nodejs_backend/.env.docker
     depends_on:
-      - mysql
-      - redis
-      - rabbitmq
-      - minio
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+      minio:
+        condition: service_started
 
   # FastAPI OCR Service
   fastapi-ocr:
@@ -53,11 +57,16 @@ services:
     volumes:
       - ./rag_chatbot/data:/app/data
     depends_on:
-      - redis
-      - postgres
-      - vector_store
-      - mysql
-      - ollama
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      postgres:
+        condition: service_started
+      vector_store:
+        condition: service_started
+      ollama:
+        condition: service_started
 
   rag-chatbot-worker:
     build:
@@ -79,14 +88,16 @@ services:
   mysql:
     image: mysql:8.0
     environment:
-      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
       - MYSQL_DATABASE=thea_db
-      - MYSQL_USER=thea_user
-      - MYSQL_PASSWORD=thea_password
     volumes:
       - mysql_data:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root"]
+      timeout: 20s
+      retries: 10
 
   redis:
     image: redis:alpine

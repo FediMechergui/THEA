@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+from pydantic import ConfigDict
 from typing import List
 
 class Settings(BaseSettings):
@@ -32,8 +33,6 @@ class Settings(BaseSettings):
     # Monitoring
     ENABLE_METRICS: bool = True
 
-    class Config:
-        case_sensitive = True
-        env_file = ".env"
+    model_config = ConfigDict(extra='allow')
 
 settings = Settings()
