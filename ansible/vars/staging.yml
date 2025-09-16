@@ -1,0 +1,141 @@
+# Staging Environment Variables for THEA Backend
+# This file contains all configuration variables for staging deployment
+
+# Environment Settings
+env: staging
+node_env: production
+app_environment: staging
+debug: false
+log_level: info
+
+# Service Ports (different from production to avoid conflicts)
+nodejs_port: 3001
+ocr_port: 8001
+chatbot_port: 8002
+mysql_port: 3308
+redis_port: 6380
+rabbitmq_port: 5673
+rabbitmq_management_port: 15673
+minio_port: 9002
+minio_console_port: 9003
+postgres_port: 5433
+chroma_port: 8011
+ollama_port: 11435
+prometheus_port: 9091
+grafana_port: 3011
+
+# Database Configuration
+mysql_database: thea_staging
+mysql_user: root
+mysql_password: ""
+postgres_database: thea_staging
+postgres_user: thea_staging_user
+postgres_password: "{{ vault_postgres_password }}"
+
+# Message Queue Configuration
+rabbitmq_user: thea_staging_user
+rabbitmq_password: "{{ vault_rabbitmq_password }}"
+
+# Object Storage Configuration
+minio_root_user: thea_staging_minio
+minio_root_password: "{{ vault_minio_password }}"
+minio_bucket_name: thea-staging-invoices
+minio_use_ssl: false
+
+# Security Configuration
+jwt_secret: "{{ vault_jwt_secret }}"
+jwt_expires_in: 24h
+jwt_refresh_expires_in: 7d
+jwt_algorithm: HS256
+api_key: "{{ vault_api_key }}"
+session_secret: "{{ vault_session_secret }}"
+
+# Redis Configuration
+redis_password: "{{ vault_redis_password }}"
+redis_db: 0
+redis_ttl: 86400
+
+# Monitoring Configuration
+grafana_admin_user: admin
+grafana_admin_password: "{{ vault_grafana_password }}"
+enable_metrics: true
+prometheus_metrics_enabled: true
+health_check_interval: 30000
+health_check_timeout: 3000
+
+# Application Configuration
+bcrypt_rounds: 12
+bcrypt_salt_rounds: 12
+rate_limit_window_ms: 900000
+rate_limit_max_requests: 100
+cors_origin: "*"
+helmet_enabled: true
+
+# Logging Configuration
+log_file_path: logs/thea-backend-staging.log
+log_max_size: 10m
+log_max_files: 5
+log_format: json
+
+# File Upload Configuration
+max_file_size: 26214400
+allowed_file_types: "pdf,jpg,jpeg,png,tiff"
+upload_temp_dir: uploads/temp
+ocr_upload_temp_dir: /app/uploads
+
+# OCR Configuration
+ocr_project_name: "Thea OCR Service (Staging)"
+ocr_confidence_threshold: 0.8
+tesseract_lang: eng
+tesseract_config: "--oem 3 --psm 6"
+processing_timeout: 300
+ocr_prometheus_port: 8001
+
+# Chatbot Configuration
+chatbot_project_name: "Thea RAG Chatbot (Staging)"
+ollama_model: llama2
+llm_temperature: 0.7
+llm_max_tokens: 1000
+embedding_model: sentence-transformers/all-MiniLM-L6-v2
+embedding_dimension: 384
+rag_chunk_size: 1000
+rag_chunk_overlap: 200
+rag_top_k_retrieval: 3
+rag_similarity_threshold: 0.7
+index_update_interval: 3600
+auto_index_enabled: true
+chroma_collection_name: thea_staging_documents
+cache_ttl: 3600
+enable_cache: true
+chatbot_prometheus_port: 8002
+
+# CORS Configuration
+cors_origins: '["*"]'
+
+# Production Configuration
+trust_proxy: 1
+keep_alive_timeout: 65000
+headers_timeout: 66000
+max_connections: 1000
+
+# Email Configuration
+email_host: smtp.gmail.com
+email_port: 587
+email_user: "{{ vault_email_user }}"
+email_password: "{{ vault_email_password }}"
+email_from: staging-noreply@thea.com
+
+# Docker Configuration
+docker_containers:
+  - thea_backend-nodejs-backend-1
+  - thea_backend-fastapi-ocr-1
+  - thea_backend-rag-chatbot-1
+  - thea_backend-mysql-1
+  - thea_backend-redis-1
+  - thea_backend-rabbitmq-1
+  - thea_backend-minio-1
+  - thea_backend-postgres-1
+  - thea_backend-vector_store-1
+  - thea_backend-ollama-1
+  - thea_backend-prometheus-1
+  - thea_backend-grafana-1

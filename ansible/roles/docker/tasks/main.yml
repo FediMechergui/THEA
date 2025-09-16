@@ -1,0 +1,83 @@
+---
+# Docker deployment tasks for THEA
+
+- name: Copy docker-compose.yml
+  template:
+    src: templates/docker-compose.yml.j2
+    dest: /opt/thea/docker-compose.yml
+    mode: '0644'
+    owner: ubuntu
+    group: ubuntu
+
+- name: Copy environment files
+  template:
+    src: "templates/{{ item }}.j2"
+    dest: "/opt/thea/{{ item }}"
+    mode: '0644'
+    owner: ubuntu
+    group: ubuntu
+  loop:
+    - nodejs_backend/.env.docker
+    - fastapi_ocr/.env.docker
+    - rag_chatbot/.env.docker
+
+- name: Create Docker networks
+  docker_network:
+    name: "{{ item }}"
+    driver: bridge
+    state: present
+  loop:
+    - thea-network
+    - monitoring
+
+- name: Pull Docker images
+  docker_image:
+    name: "{{ item.name }}"
+    tag: "{{ item.tag | default('latest') }}"
+    source: pull
+    state: present
+  loop:
+    - { name: 'mysql', tag: '8.0' }
+    - { name: 'postgres', tag: '13-alpine' }
+    - { name: 'redis', tag: 'alpine' }
+    - { name: 'rabbitmq', tag: '3-management' }
+    - { name: 'minio/minio' }
+    - { name: 'chromadb/chroma' }
+    - { name: 'ollama/ollama' }
+    - { name: 'prom/prometheus' }
+    - { name: 'grafana/grafana' }
+    - { name: 'thea_backend-nodejs-backend' }
+    - { name: 'thea_backend-fastapi-ocr' }
+    - { name: 'thea_backend-rag-chatbot' }
+
+- name: Start Docker services
+  docker_compose:
+    project_src: /opt/thea
+    state: present
+    pull: yes
+    remove_orphans: yes
+
+- name: Wait for services to be healthy
+  docker_container_info:
+    name: "{{ item }}"
+  register: container_info
+  until: "container_info.container.State.Health.Status == 'healthy'"
+  retries: 30
+  delay: 10
+  loop:
+    - thea_backend-mysql-1
+    - thea_backend-nodejs-backend-1
+
+- name: Configure Docker service restart policy
+  docker_container:
+    name: "{{ item }}"
+    restart_policy: unless-stopped
+    state: present
+  loop: "{{ docker_containers }}"
+
+- name: Set up Docker cleanup cron job
+  cron:
+    name: "Docker cleanup"
+    minute: "0"
+    hour: "2"
+    job: "docker system prune -f && docker volume prune -f"

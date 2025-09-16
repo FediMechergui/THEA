@@ -1,0 +1,34 @@
+#!/bin/bash
+# THEA System Monitoring Script
+
+LOG_FILE="/opt/thea/logs/system-monitor.log"
+TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
+
+echo "[$TIMESTAMP] === THEA System Health Check ===" >> $LOG_FILE
+
+# Check Docker services
+echo "[$TIMESTAMP] Checking Docker services..." >> $LOG_FILE
+docker-compose -f /opt/thea/docker-compose.yml ps >> $LOG_FILE 2>&1
+
+# Check disk usage
+echo "[$TIMESTAMP] Disk usage:" >> $LOG_FILE
+df -h >> $LOG_FILE 2>&1
+
+# Check memory usage
+echo "[$TIMESTAMP] Memory usage:" >> $LOG_FILE
+free -h >> $LOG_FILE 2>&1
+
+# Check THEA service health
+echo "[$TIMESTAMP] Service health checks:" >> $LOG_FILE
+
+# Node.js Backend
+curl -s -o /dev/null -w "Node.js Backend: %{http_code}\n" http://localhost:3000/health >> $LOG_FILE 2>&1 || echo "Node.js Backend: FAILED" >> $LOG_FILE
+
+# FastAPI OCR
+curl -s -o /dev/null -w "FastAPI OCR: %{http_code}\n" http://localhost:8000/health >> $LOG_FILE 2>&1 || echo "FastAPI OCR: FAILED" >> $LOG_FILE
+
+# RAG Chatbot
+curl -s -o /dev/null -w "RAG Chatbot: %{http_code}\n" http://localhost:8001/health >> $LOG_FILE 2>&1 || echo "RAG Chatbot: FAILED" >> $LOG_FILE
+
+echo "[$TIMESTAMP] === Health Check Complete ===" >> $LOG_FILE
+echo "" >> $LOG_FILE

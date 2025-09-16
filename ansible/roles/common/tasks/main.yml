@@ -1,0 +1,100 @@
+---
+# Common setup tasks for all THEA servers
+
+- name: Create THEA directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+    owner: ubuntu
+    group: ubuntu
+  loop:
+    - /opt/thea
+    - /opt/thea/logs
+    - /opt/thea/backups
+    - /opt/thea/ssl
+    - /var/lib/thea
+
+- name: Install additional Python packages
+  pip:
+    name:
+      - docker
+      - docker-compose
+      - requests
+    state: present
+    executable: pip3
+
+- name: Configure system limits for Docker
+  pam_limits:
+    domain: '*'
+    limit_type: soft
+    limit_item: nofile
+    value: 65536
+
+- name: Configure system limits for Docker (hard)
+  pam_limits:
+    domain: '*'
+    limit_type: hard
+    limit_item: nofile
+    value: 65536
+
+- name: Configure Docker daemon
+  template:
+    src: templates/docker-daemon.json.j2
+    dest: /etc/docker/daemon.json
+    mode: '0644'
+  notify: restart docker
+
+- name: Configure firewall
+  ufw:
+    state: enabled
+    policy: deny
+    rules:
+      - rule: allow
+        port: '22'
+        proto: tcp
+      - rule: allow
+        port: '80'
+        proto: tcp
+      - rule: allow
+        port: '443'
+        proto: tcp
+
+- name: Allow THEA service ports
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop:
+    - '3000'  # Node.js Backend
+    - '8000'  # FastAPI OCR
+    - '8001'  # RAG Chatbot
+    - '3307'  # MySQL
+    - '5432'  # PostgreSQL
+    - '6379'  # Redis
+    - '5672'  # RabbitMQ
+    - '15672' # RabbitMQ Management
+    - '9000'  # MinIO
+    - '9001'  # MinIO
+    - '9090'  # Prometheus
+    - '3010'  # Grafana
+    - '8010'  # ChromaDB
+    - '11434' # Ollama
+
+- name: Configure log rotation
+  template:
+    src: templates/logrotate-thea.j2
+    dest: /etc/logrotate.d/thea
+    mode: '0644'
+
+- name: Configure system monitoring
+  template:
+    src: templates/monitoring.sh.j2
+    dest: /usr/local/bin/thea-monitor.sh
+    mode: '0755'
+
+- name: Set up monitoring cron job
+  cron:
+    name: "THEA system monitoring"
+    minute: "*/5"
+    job: "/usr/local/bin/thea-monitor.sh"

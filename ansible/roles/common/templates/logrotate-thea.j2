@@ -1,0 +1,22 @@
+/opt/thea/logs/*.log {
+    daily
+    missingok
+    rotate 7
+    compress
+    delaycompress
+    notifempty
+    create 0644 ubuntu ubuntu
+    postrotate
+        docker-compose -f /opt/thea/docker-compose.yml logs -f > /dev/null 2>&1 || true
+    endscript
+}
+
+/var/lib/docker/containers/*/*.log {
+    daily
+    missingok
+    rotate 7
+    compress
+    delaycompress
+    notifempty
+    create 0644 root root
+}

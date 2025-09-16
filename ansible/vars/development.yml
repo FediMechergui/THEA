@@ -1,0 +1,141 @@
+# Development Environment Variables for THEA Backend
+# This file contains all configuration variables for development deployment
+
+# Environment Settings
+env: development
+node_env: development
+app_environment: development
+debug: true
+log_level: debug
+
+# Service Ports (local development)
+nodejs_port: 3000
+ocr_port: 8000
+chatbot_port: 8001
+mysql_port: 3307
+redis_port: 6379
+rabbitmq_port: 5672
+rabbitmq_management_port: 15672
+minio_port: 9000
+minio_console_port: 9001
+postgres_port: 5432
+chroma_port: 8010
+ollama_port: 11434
+prometheus_port: 9090
+grafana_port: 3010
+
+# Database Configuration
+mysql_database: thea_dev
+mysql_user: root
+mysql_password: ""
+postgres_database: thea_dev
+postgres_user: thea_dev_user
+postgres_password: dev_password
+
+# Message Queue Configuration
+rabbitmq_user: guest
+rabbitmq_password: guest
+
+# Object Storage Configuration
+minio_root_user: minioadmin
+minio_root_password: minioadmin
+minio_bucket_name: thea-dev-invoices
+minio_use_ssl: false
+
+# Security Configuration (development secrets - NOT for production)
+jwt_secret: dev_jwt_secret_key_for_development_only
+jwt_expires_in: 24h
+jwt_refresh_expires_in: 7d
+jwt_algorithm: HS256
+api_key: dev-api-key-for-development
+session_secret: dev_session_secret_key
+
+# Redis Configuration
+redis_password: ""
+redis_db: 0
+redis_ttl: 86400
+
+# Monitoring Configuration
+grafana_admin_user: admin
+grafana_admin_password: admin
+enable_metrics: true
+prometheus_metrics_enabled: true
+health_check_interval: 30000
+health_check_timeout: 3000
+
+# Application Configuration
+bcrypt_rounds: 8
+bcrypt_salt_rounds: 8
+rate_limit_window_ms: 900000
+rate_limit_max_requests: 1000
+cors_origin: "*"
+helmet_enabled: false
+
+# Logging Configuration
+log_file_path: logs/thea-backend-dev.log
+log_max_size: 10m
+log_max_files: 3
+log_format: json
+
+# File Upload Configuration
+max_file_size: 26214400
+allowed_file_types: "pdf,jpg,jpeg,png,tiff"
+upload_temp_dir: uploads/temp
+ocr_upload_temp_dir: /app/uploads
+
+# OCR Configuration
+ocr_project_name: "Thea OCR Service (Dev)"
+ocr_confidence_threshold: 0.6
+tesseract_lang: eng
+tesseract_config: "--oem 3 --psm 6"
+processing_timeout: 300
+ocr_prometheus_port: 8000
+
+# Chatbot Configuration
+chatbot_project_name: "Thea RAG Chatbot (Dev)"
+ollama_model: llama2
+llm_temperature: 0.8
+llm_max_tokens: 500
+embedding_model: sentence-transformers/all-MiniLM-L6-v2
+embedding_dimension: 384
+rag_chunk_size: 500
+rag_chunk_overlap: 100
+rag_top_k_retrieval: 5
+rag_similarity_threshold: 0.5
+index_update_interval: 1800
+auto_index_enabled: true
+chroma_collection_name: thea_dev_documents
+cache_ttl: 1800
+enable_cache: true
+chatbot_prometheus_port: 8001
+
+# CORS Configuration
+cors_origins: '["*"]'
+
+# Development Configuration
+trust_proxy: 1
+keep_alive_timeout: 65000
+headers_timeout: 66000
+max_connections: 100
+
+# Email Configuration (disabled in dev)
+email_host: smtp.gmail.com
+email_port: 587
+email_user: ""
+email_password: ""
+email_from: dev-noreply@thea.com
+
+# Docker Configuration
+docker_containers:
+  - thea_backend-nodejs-backend-1
+  - thea_backend-fastapi-ocr-1
+  - thea_backend-rag-chatbot-1
+  - thea_backend-mysql-1
+  - thea_backend-redis-1
+  - thea_backend-rabbitmq-1
+  - thea_backend-minio-1
+  - thea_backend-postgres-1
+  - thea_backend-vector_store-1
+  - thea_backend-ollama-1
+  - thea_backend-prometheus-1
+  - thea_backend-grafana-1

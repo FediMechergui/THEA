@@ -1,0 +1,21 @@
+{
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "3"
+  },
+  "storage-driver": "overlay2",
+  "iptables": false,
+  "bridge": "none",
+  "ip-forward": false,
+  "ip-masq": false,
+  "userland-proxy": false,
+  "live-restore": true,
+  "group": "docker",
+  "hosts": ["unix:///var/run/docker.sock", "tcp://127.0.0.1:2376"],
+  "tls": true,
+  "tlsverify": true,
+  "tlscacert": "/opt/thea/ssl/ca.pem",
+  "tlscert": "/opt/thea/ssl/server-cert.pem",
+  "tlskey": "/opt/thea/ssl/server-key.pem"
+}
