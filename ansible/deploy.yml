@@ -38,12 +38,6 @@
   roles:
     - role: common
     - role: docker
-    - role: nodejs_backend
-    - role: fastapi_ocr
-    - role: rag_chatbot
-    - role: monitoring
-    - role: security
-    - role: backup
 
   post_tasks:
     - name: Wait for services to be healthy

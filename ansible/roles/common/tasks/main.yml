@@ -6,8 +6,8 @@
     path: "{{ item }}"
     state: directory
     mode: '0755'
-    owner: ubuntu
-    group: ubuntu
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
   loop:
     - /opt/thea
     - /opt/thea/logs
