@@ -1,0 +1,108 @@
+---
+title: THEA Microservices Architecture
+config:
+  theme: base
+  themeVariables:
+    primaryColor: "#2563eb"
+    primaryTextColor: "#ffffff"
+    primaryBorderColor: "#1e40af"
+    lineColor: "#64748b"
+    sectionBkgColor: "#f8fafc"
+    altSectionBkgColor: "#e2e8f0"
+    gridColor: "#cbd5e1"
+    tertiaryColor: "#f1f5f9"
+---
+
+graph TB
+    %% Styling
+    classDef gateway fill:#3b82f6,stroke:#1e40af,stroke-width:3px,color:#ffffff
+    classDef core fill:#10b981,stroke:#059669,stroke-width:2px,color:#ffffff
+    classDef external fill:#f59e0b,stroke:#d97706,stroke-width:2px,color:#ffffff
+    classDef data fill:#8b5cf6,stroke:#7c3aed,stroke-width:2px,color:#ffffff
+    classDef monitoring fill:#ef4444,stroke:#dc2626,stroke-width:2px,color:#ffffff
+
+    %% API Gateway
+    APIGW["fa:fa-server API Gateway<br/>Nginx/Traefik"]:::gateway
+
+    %% Core Services
+    BACKEND["fa:fa-node-js Node.js Backend<br/>Express + Prisma<br/>Port: 3000"]:::core
+    OCR["fa:fa-file-text FastAPI OCR Service<br/>Document Processing<br/>Port: 8000"]:::external
+    CHATBOT["fa:fa-robot RAG Chatbot Service<br/>AI Assistant<br/>Port: 8001"]:::external
+
+    %% Data Layer
+    MYSQL["fa:fa-database MySQL 8.0<br/>Application DB<br/>Port: 3306"]:::data
+    REDIS["fa:fa-bolt Redis<br/>Cache Layer<br/>Port: 6379"]:::data
+    MINIO["fa:fa-cloud MinIO<br/>Object Storage<br/>Port: 9000"]:::data
+    POSTGRES["fa:fa-database PostgreSQL<br/>Vector Store<br/>Port: 5432"]:::data
+
+    %% Message Queue
+    RABBITMQ["fa:fa-envelope RabbitMQ<br/>Message Broker<br/>Port: 5672"]:::data
+
+    %% Monitoring Stack
+    PROMETHEUS["fa:fa-chart-line Prometheus<br/>Metrics Collection"]:::monitoring
+    GRAFANA["fa:fa-chart-bar Grafana<br/>Dashboards<br/>Port: 3001"]:::monitoring
+
+    %% AI/ML Components
+    OLLAMA["fa:fa-brain Ollama<br/>LLM Runtime"]:::external
+
+    %% Connections
+    APIGW --> BACKEND
+    APIGW --> OCR
+    APIGW --> CHATBOT
+
+    BACKEND --> MYSQL
+    BACKEND --> REDIS
+    BACKEND --> MINIO
+    BACKEND --> RABBITMQ
+
+    CHATBOT --> POSTGRES
+    CHATBOT --> OLLAMA
+
+    OCR --> MINIO
+    OCR --> RABBITMQ
+
+    %% Monitoring connections
+    BACKEND --> PROMETHEUS
+    MYSQL --> PROMETHEUS
+    REDIS --> PROMETHEUS
+    RABBITMQ --> PROMETHEUS
+    MINIO --> PROMETHEUS
+
+    PROMETHEUS --> GRAFANA
+
+    %% Subgraphs for better organization
+    subgraph "fa:fa-door-open API Gateway Layer"
+        APIGW
+    end
+
+    subgraph "fa:fa-cogs Core Services"
+        BACKEND
+        OCR
+        CHATBOT
+    end
+
+    subgraph "fa:fa-hdd Data & Storage"
+        MYSQL
+        REDIS
+        MINIO
+        POSTGRES
+    end
+
+    subgraph "fa:fa-envelope Message Queue"
+        RABBITMQ
+    end
+
+    subgraph "fa:fa-brain AI/ML Stack"
+        OLLAMA
+    end
+
+    subgraph "fa:fa-eye Monitoring & Observability"
+        PROMETHEUS
+        GRAFANA
+    end
+
+    %% Flow annotations
+    BACKEND -.->|"fa:fa-key JWT Auth"| APIGW
+    OCR -.->|"fa:fa-upload Document Upload"| MINIO
+    CHATBOT -.->|"fa:fa-reply AI Responses"| APIGW
+    RABBITMQ -.->|"fa:fa-clock Async Processing"| BACKEND
