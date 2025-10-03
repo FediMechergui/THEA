@@ -1,8 +1,9 @@
+from functools import lru_cache
 from langchain.chains import RetrievalQAWithSourcesChain
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import Chroma
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import Chroma
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.document_loaders.json_loader import JSONLoader
+from langchain_community.document_loaders import JSONLoader
 from langchain_community.llms import Ollama
 from ..worker import celery
 from ..core.config import settings
@@ -20,8 +21,10 @@ class ChatService:
         self.embeddings = HuggingFaceEmbeddings(
             model_name="sentence-transformers/all-MiniLM-L6-v2"
         )
+        persist_directory = settings.VECTOR_STORE_PATH or "./data/chroma"
+
         self.vector_store = Chroma(
-            persist_directory="./data/chroma",
+            persist_directory=persist_directory,
             embedding_function=self.embeddings
         )
         self.llm = Ollama(
@@ -44,6 +47,14 @@ class ChatService:
         Process a chat query and return a response with sources
         """
         try:
+            # Validate query input
+            if not query or not query.strip():
+                return {
+                    "response": "I'm sorry, but your query appears to be empty. Please provide a question or request.",
+                    "sources": [],
+                    "conversation_id": conversation_id or str(uuid4())
+                }
+
             # Generate conversation ID if not provided
             if not conversation_id:
                 conversation_id = str(uuid4())
@@ -53,11 +64,46 @@ class ChatService:
 
             # Get response from QA chain
             response = self.qa_chain({"question": enhanced_query})
+            
+            logger.info(f"QA Chain response: {response}")
+            logger.info(f"Response type: {type(response)}")
+            logger.info(f"Response keys: {response.keys() if isinstance(response, dict) else 'Not a dict'}")
+            
+            # Handle different possible response formats from LangChain
+            if isinstance(response, dict):
+                # Try different possible key names
+                answer = (response.get("answer") or 
+                         response.get("result") or 
+                         response.get("text") or 
+                         response.get("output") or
+                         response.get("response") or  # Add this as potential key
+                         str(response))
+                
+                sources = (response.get("sources") or 
+                          response.get("source_documents") or 
+                          response.get("documents") or 
+                          [])
+                
+                # If we still don't have a proper answer, log the response structure
+                if not answer or answer == str(response):
+                    logger.warning(f"Unexpected response format. Available keys: {list(response.keys()) if isinstance(response, dict) else 'N/A'}")
+                    # Try to extract the first string value from the response
+                    for key, value in response.items():
+                        if isinstance(value, str) and len(value) > 10:  # Assume meaningful responses are longer than 10 chars
+                            answer = value
+                            break
+                    else:
+                        answer = "I apologize, but I encountered an issue processing your request. Please try again."
+                        
+            else:
+                # Fallback for non-dict responses
+                answer = str(response)
+                sources = []
 
             # Structure the response
             result = {
-                "response": response["answer"],
-                "sources": self._process_sources(response["sources"]),
+                "response": answer,
+                "sources": self._process_sources(sources),
                 "conversation_id": conversation_id
             }
 
@@ -89,25 +135,51 @@ class ChatService:
 
         return f"{query} Context: {context_str}"
 
-    def _process_sources(self, sources: str) -> List[Dict[str, Any]]:
+    def _process_sources(self, sources) -> List[Dict[str, Any]]:
         """
         Process and structure the sources from the QA chain
         """
         try:
-            # Split sources into individual references
-            source_list = sources.split("\n")
             processed_sources = []
-
-            for source in source_list:
-                if source.strip():
-                    # Extract source details (customize based on your source format)
-                    source_parts = source.split(":")
-                    if len(source_parts) >= 2:
+            
+            # Handle different source formats
+            if isinstance(sources, str):
+                # If sources is a string, split it
+                source_list = sources.split("\n")
+                for source in source_list:
+                    if source.strip():
+                        source_parts = source.split(":")
+                        if len(source_parts) >= 2:
+                            processed_sources.append({
+                                "type": source_parts[0].strip(),
+                                "reference": source_parts[1].strip(),
+                                "confidence": 0.9
+                            })
+            elif isinstance(sources, list):
+                # If sources is already a list, process each item
+                for source in sources:
+                    if hasattr(source, 'page_content'):
+                        # Document object
                         processed_sources.append({
-                            "type": source_parts[0].strip(),
-                            "reference": source_parts[1].strip(),
-                            "confidence": 0.9  # Add actual confidence scoring if available
+                            "type": "document",
+                            "reference": source.page_content[:200] + "..." if len(source.page_content) > 200 else source.page_content,
+                            "confidence": 0.9,
+                            "metadata": getattr(source, 'metadata', {})
                         })
+                    elif isinstance(source, str):
+                        # String in list
+                        processed_sources.append({
+                            "type": "text",
+                            "reference": source,
+                            "confidence": 0.9
+                        })
+            else:
+                # Fallback for other types
+                processed_sources.append({
+                    "type": "unknown",
+                    "reference": str(sources),
+                    "confidence": 0.5
+                })
 
             return processed_sources
         except Exception as e:
@@ -145,8 +217,10 @@ class ChatService:
             logger.error(f"Error retrieving conversation history: {str(e)}")
             raise
 
+@lru_cache(maxsize=1)
 def get_chat_service():
     """
     Factory function for ChatService (dependency injection)
+    Reuses a singleton instance to avoid expensive model loads per request.
     """
     return ChatService()

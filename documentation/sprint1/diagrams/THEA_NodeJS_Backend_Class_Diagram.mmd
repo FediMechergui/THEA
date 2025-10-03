@@ -1,0 +1,424 @@
+classDiagram
+    %% Main Application Components
+    class Server {
+        +express app
+        +PORT: number
+        +startServer()
+        +initializeServices()
+        +shutdownServices()
+    }
+
+    %% Configuration Layer
+    class DatabaseConfig {
+        +prisma: PrismaClient
+        +testConnection()
+        +initializeDatabase()
+    }
+
+    class LoggerConfig {
+        +winston logger
+        +logFormat
+        +transports[]
+    }
+
+    %% Middleware Layer
+    class AuthMiddleware {
+        +authenticateToken(req, res, next)
+        +requireRole(roles[])
+        +requireEnterpriseAccess(req, res, next)
+    }
+
+    class ErrorHandler {
+        +handleErrors(err, req, res, next)
+    }
+
+    class RequestLogger {
+        +logRequests(req, res, next)
+    }
+
+    class NotFoundHandler {
+        +handle404(req, res, next)
+    }
+
+    %% Service Layer
+    class ServiceInitializer {
+        +initializeServices()
+        +shutdownServices()
+    }
+
+    class RedisService {
+        +initializeRedis()
+        +get(key)
+        +set(key, value)
+        +expire(key, ttl)
+        +del(key)
+    }
+
+    class MinioService {
+        +initializeMinIO()
+        +uploadFile(file, bucket)
+        +getPresignedUrl(key, bucket)
+        +deleteFile(key, bucket)
+        +getFile(key, bucket)
+    }
+
+    class RabbitMQService {
+        +initializeRabbitMQ()
+        +publishMessage(queue, message)
+        +consumeMessages(queue, callback)
+        +closeConnection()
+    }
+
+    %% Route Layer
+    class AuthRoutes {
+        +POST /register
+        +POST /login
+        +POST /refresh
+        +GET /me
+        +POST /logout
+        +POST /change-password
+    }
+
+    class UserRoutes {
+        +GET /
+        +POST /
+        +GET /:id
+        +PUT /:id
+        +DELETE /:id
+    }
+
+    class EnterpriseRoutes {
+        +GET /
+        +POST /
+        +GET /:id
+        +PUT /:id
+        +DELETE /:id
+    }
+
+    class ClientRoutes {
+        +GET /
+        +POST /
+        +GET /:id
+        +PUT /:id
+        +DELETE /:id
+    }
+
+    class SupplierRoutes {
+        +GET /
+        +POST /
+        +GET /:id
+        +PUT /:id
+        +DELETE /:id
+    }
+
+    class ProjectRoutes {
+        +GET /
+        +POST /
+        +GET /:id
+        +PUT /:id
+        +DELETE /:id
+    }
+
+    class InvoiceRoutes {
+        +POST /
+        +GET /
+        +GET /:id
+        +PUT /:id
+        +DELETE /:id
+        +POST /:id/verify
+        +GET /:id/download
+    }
+
+    class StockRoutes {
+        +GET /
+        +POST /
+        +GET /:id
+        +PUT /:id
+        +DELETE /:id
+    }
+
+    class MetricsRoutes {
+        +GET /
+        +GET /reports
+        +GET /dashboard
+        +POST /calculate
+    }
+
+    %% Data Models (Prisma Entities)
+    class Enterprise {
+        +id: String
+        +name: String
+        +taxId: String
+        +country: String
+        +currency: String
+        +address: String
+        +phone: String
+        +city: String
+        +postalCode: String
+        +invitationCode: String
+        +createdAt: DateTime
+        +updatedAt: DateTime
+    }
+
+    class User {
+        +id: String
+        +username: String
+        +email: String
+        +passwordHash: String
+        +role: UserRole
+        +phone: String?
+        +address: String?
+        +specialty: String?
+        +encryptedPii: String?
+        +mfaEnabled: Boolean
+        +createdAt: DateTime
+        +updatedAt: DateTime
+        +enterpriseId: String
+    }
+
+    class Client {
+        +id: String
+        +name: String
+        +email: String?
+        +phone: String?
+        +address: String?
+        +specialty: String?
+        +createdAt: DateTime
+        +updatedAt: DateTime
+        +enterpriseId: String
+    }
+
+    class Supplier {
+        +id: String
+        +name: String
+        +email: String?
+        +phone: String?
+        +address: String?
+        +income: Decimal
+        +outcome: Decimal
+        +specialty: String?
+        +biAnnotations: String?
+        +createdAt: DateTime
+        +updatedAt: DateTime
+        +enterpriseId: String
+    }
+
+    class Project {
+        +id: String
+        +name: String
+        +description: String?
+        +biAnnotations: String?
+        +createdAt: DateTime
+        +updatedAt: DateTime
+        +enterpriseId: String
+    }
+
+    class Invoice {
+        +id: String
+        +invoiceDate: DateTime
+        +dueDate: DateTime
+        +totalAmount: Decimal
+        +currency: String
+        +status: InvoiceStatus
+        +type: InvoiceType
+        +scanUrl: String?
+        +extractedData: Json?
+        +verificationStatus: VerificationStatus
+        +digitalSignature: String?
+        +createdAt: DateTime
+        +updatedAt: DateTime
+        +enterpriseId: String
+        +clientId: String?
+        +supplierId: String?
+        +projectId: String?
+        +createdById: String
+        +processedById: String?
+        +verifiedById: String?
+    }
+
+    class CompanyStock {
+        +id: String
+        +itemName: String
+        +quantity: Int
+        +unitPrice: Decimal
+        +totalValue: Decimal
+        +reorderThreshold: Int
+        +valuationMethod: ValuationMethod
+        +createdAt: DateTime
+        +updatedAt: DateTime
+        +enterpriseId: String
+    }
+
+    class Metrics {
+        +id: String
+        +financialSummary: Json
+        +chartConfigs: Json
+        +createdAt: DateTime
+        +updatedAt: DateTime
+        +enterpriseId: String
+        +projectId: String?
+        +companyStockId: String?
+    }
+
+    class AuditLog {
+        +id: String
+        +logEventType: LogEventType
+        +versionHash: String
+        +immutable: Boolean
+        +createdAt: DateTime
+        +enterpriseId: String
+        +userId: String?
+        +invoiceId: String?
+    }
+
+    class InvoiceLayout {
+        +id: String
+        +layoutData: Json
+        +fieldCoordinates: Json
+        +templateHash: String
+        +createdAt: DateTime
+        +updatedAt: DateTime
+        +invoiceId: String
+    }
+
+    %% Relationships
+    Server --> DatabaseConfig : uses
+    Server --> LoggerConfig : uses
+    Server --> ServiceInitializer : initializes
+    Server --> AuthRoutes : mounts
+    Server --> UserRoutes : mounts
+    Server --> EnterpriseRoutes : mounts
+    Server --> ClientRoutes : mounts
+    Server --> SupplierRoutes : mounts
+    Server --> ProjectRoutes : mounts
+    Server --> InvoiceRoutes : mounts
+    Server --> StockRoutes : mounts
+    Server --> MetricsRoutes : mounts
+
+    ServiceInitializer --> RedisService : initializes
+    ServiceInitializer --> MinioService : initializes
+    ServiceInitializer --> RabbitMQService : initializes
+    ServiceInitializer --> DatabaseConfig : initializes
+
+    AuthRoutes --> AuthMiddleware : uses
+    InvoiceRoutes --> AuthMiddleware : uses
+    UserRoutes --> AuthMiddleware : uses
+    EnterpriseRoutes --> AuthMiddleware : uses
+    ClientRoutes --> AuthMiddleware : uses
+    SupplierRoutes --> AuthMiddleware : uses
+    ProjectRoutes --> AuthMiddleware : uses
+    StockRoutes --> AuthMiddleware : uses
+    MetricsRoutes --> AuthMiddleware : uses
+
+    AuthRoutes --> DatabaseConfig : uses
+    InvoiceRoutes --> DatabaseConfig : uses
+    UserRoutes --> DatabaseConfig : uses
+    EnterpriseRoutes --> DatabaseConfig : uses
+    ClientRoutes --> DatabaseConfig : uses
+    SupplierRoutes --> DatabaseConfig : uses
+    ProjectRoutes --> DatabaseConfig : uses
+    StockRoutes --> DatabaseConfig : uses
+    MetricsRoutes --> DatabaseConfig : uses
+
+    InvoiceRoutes --> MinioService : uses
+    InvoiceRoutes --> RabbitMQService : uses
+    InvoiceRoutes --> RedisService : uses
+
+    AuthMiddleware --> DatabaseConfig : uses
+    AuthMiddleware --> LoggerConfig : uses
+
+    Server --> ErrorHandler : uses
+    Server --> RequestLogger : uses
+    Server --> NotFoundHandler : uses
+
+    %% Data Model Relationships
+    Enterprise --> User : "1 to many"
+    Enterprise --> Client : "1 to many"
+    Enterprise --> Supplier : "1 to many"
+    Enterprise --> Project : "1 to many"
+    Enterprise --> Invoice : "1 to many"
+    Enterprise --> CompanyStock : "1 to many"
+    Enterprise --> AuditLog : "1 to many"
+    Enterprise --> Metrics : "1 to many"
+
+    User --> User : "sub-accounts"
+    User --> Invoice : creates
+    User --> Invoice : processes
+    User --> Invoice : verifies
+    User --> AuditLog : creates
+
+    Client --> Invoice : has
+    Supplier --> Invoice : has
+    Project --> Invoice : has
+    Project --> Metrics : has
+
+    Invoice --> InvoiceLayout : has
+    Invoice --> AuditLog : has
+
+    CompanyStock --> Metrics : has
+
+    %% Enums
+    class UserRole {
+        <<enumeration>>
+        ADMIN
+        ACCOUNTANT
+        VERIFIER
+    }
+
+    class InvoiceStatus {
+        <<enumeration>>
+        PENDING
+        PAID
+        OVERDUE
+    }
+
+    class InvoiceType {
+        <<enumeration>>
+        SALE
+        PURCHASE
+    }
+
+    class VerificationStatus {
+        <<enumeration>>
+        AUTO_APPROVED
+        MANUAL_VERIFICATION_NEEDED
+        VERIFIED
+        REJECTED
+    }
+
+    class ValuationMethod {
+        <<enumeration>>
+        FIFO
+        LIFO
+        WEIGHTED_AVERAGE
+        SPECIFIC_IDENTIFICATION
+    }
+
+    class LogEventType {
+        <<enumeration>>
+        USER_LOGIN
+        USER_LOGOUT
+        INVOICE_CREATED
+        INVOICE_UPDATED
+        INVOICE_DELETED
+        USER_CREATED
+        USER_UPDATED
+        USER_DELETED
+        ENTERPRISE_CREATED
+        ENTERPRISE_UPDATED
+        CLIENT_CREATED
+        CLIENT_UPDATED
+        SUPPLIER_CREATED
+        SUPPLIER_UPDATED
+        PROJECT_CREATED
+        PROJECT_UPDATED
+        STOCK_UPDATED
+        AUDIT_LOG_ACCESSED
+    }
+
+    User --> UserRole : uses
+    Invoice --> InvoiceStatus : uses
+    Invoice --> InvoiceType : uses
+    Invoice --> VerificationStatus : uses
+    CompanyStock --> ValuationMethod : uses
+    AuditLog --> LogEventType : uses

@@ -1,0 +1,129 @@
+﻿{
+    "timestamp":  "2025-09-30 02:37:43",
+    "failed_tests":  5,
+    "total_tests":  12,
+    "test_results":  [
+                         {
+                             "Test":  "RAG Chatbot Health Check",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "31.7538ms",
+                             "ResponseSize":  44,
+                             "Response":  {
+                                              "status":  "healthy",
+                                              "service":  "rag-chatbot"
+                                          }
+                         },
+                         {
+                             "Test":  "Node.js Backend Health Check",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "31.0595ms",
+                             "ResponseSize":  103,
+                             "Response":  {
+                                              "status":  "OK",
+                                              "timestamp":  "2025-09-30T01:32:38.632Z",
+                                              "uptime":  65.697543045,
+                                              "environment":  "production"
+                                          }
+                         },
+                         {
+                             "Test":  "ChromaDB Health Check",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "28.6703ms",
+                             "ResponseSize":  7,
+                             "Response":  "1.0.0"
+                         },
+                         {
+                             "Test":  "Ollama Health Check",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "24.0065ms",
+                             "ResponseSize":  20,
+                             "Response":  {
+                                              "version":  "0.11.5"
+                                          }
+                         },
+                         {
+                             "Test":  "Check Available Models",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "17.5407ms",
+                             "ResponseSize":  333,
+                             "Response":  {
+                                              "models":  ""
+                                          }
+                         },
+                         {
+                             "Test":  "List ChromaDB Collections",
+                             "Status":  "ERROR",
+                             "StatusCode":  "N/A",
+                             "Duration":  "N/A",
+                             "ResponseSize":  0,
+                             "Response":  "The remote server returned an error: (404) Not Found."
+                         },
+                         {
+                             "Test":  "Simple Chat Query",
+                             "Status":  "ERROR",
+                             "StatusCode":  "N/A",
+                             "Duration":  "N/A",
+                             "ResponseSize":  0,
+                             "Response":  "The request was aborted: The operation has timed out."
+                         },
+                         {
+                             "Test":  "Business Context Query",
+                             "Status":  "ERROR",
+                             "StatusCode":  "N/A",
+                             "Duration":  "N/A",
+                             "ResponseSize":  0,
+                             "Response":  "The request was aborted: The operation has timed out."
+                         },
+                         {
+                             "Test":  "Start Data Indexing",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "34129.414ms",
+                             "ResponseSize":  141,
+                             "Response":  {
+                                              "status":  "processing",
+                                              "task_id":  "ce131ec3-799d-49dd-bf36-956fb038db24",
+                                              "message":  "Indexing test_documents data",
+                                              "error":  null,
+                                              "details":  null
+                                          }
+                         },
+                         {
+                             "Test":  "Check Indexing Status",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "4023.3109ms",
+                             "ResponseSize":  137,
+                             "Response":  {
+                                              "status":  "processing",
+                                              "task_id":  "ce131ec3-799d-49dd-bf36-956fb038db24",
+                                              "message":  "Task is still processing",
+                                              "error":  null,
+                                              "details":  null
+                                          }
+                         },
+                         {
+                             "Test":  "Invalid Endpoint (404)",
+                             "Status":  "ERROR",
+                             "StatusCode":  "N/A",
+                             "Duration":  "N/A",
+                             "ResponseSize":  0,
+                             "Response":  "The remote server returned an error: (404) Not Found."
+                         },
+                         {
+                             "Test":  "Empty Query Handling",
+                             "Status":  "ERROR",
+                             "StatusCode":  "N/A",
+                             "Duration":  "N/A",
+                             "ResponseSize":  0,
+                             "Response":  "The request was aborted: The operation has timed out."
+                         }
+                     ],
+    "passed_tests":  7,
+    "success_rate":  58.33
+}

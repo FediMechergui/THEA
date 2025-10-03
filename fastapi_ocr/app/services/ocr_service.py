@@ -1,30 +1,39 @@
 import pytesseract
 import cv2
 import numpy as np
-from pdf2image import convert_from_bytes
+from pdf2image import convert_from_path
 import re
+import os
 from datetime import datetime
 from ..worker import celery
 import logging
 from typing import Dict, Any, List
 import json
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
 @celery.task
-def process_invoice(file_content: bytes) -> Dict[str, Any]:
+def process_invoice(file_path: str) -> Dict[str, Any]:
     """
     Process invoice file and extract relevant information using OCR
     """
     try:
+        file_path_obj = Path(file_path)
+        
+        # Read file content to determine type
+        with open(file_path_obj, 'rb') as f:
+            file_content = f.read(4)
+        
         # Convert PDF to images if needed
         if file_content.startswith(b'%PDF'):
-            images = convert_from_bytes(file_content)
+            images = convert_from_path(file_path)
             image = np.array(images[0])
         else:
             # Handle image files
-            nparr = np.frombuffer(file_content, np.uint8)
-            image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+            image = cv2.imread(str(file_path))
+            if image is None:
+                raise ValueError("Could not read image file")
 
         # Preprocess image
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -52,6 +61,14 @@ def process_invoice(file_content: bytes) -> Dict[str, Any]:
     except Exception as e:
         logger.error(f"Error processing invoice: {str(e)}")
         raise
+    finally:
+        # Clean up temporary file
+        try:
+            if file_path_obj.exists():
+                file_path_obj.unlink()
+                logger.info(f"Cleaned up temporary file: {file_path}")
+        except Exception as cleanup_error:
+            logger.warning(f"Could not clean up file {file_path}: {cleanup_error}")
 
 def extract_invoice_number(text: str) -> str:
     """Extract invoice number from text"""

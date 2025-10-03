@@ -23,9 +23,9 @@ async def chat(
         )
         
         return ChatResponse(
-            response=response.response,
-            sources=response.sources,
-            conversation_id=response.conversation_id
+            response=response["response"],
+            sources=response["sources"],
+            conversation_id=response["conversation_id"]
         )
     except Exception as e:
         logger.error(f"Error processing chat request: {str(e)}")

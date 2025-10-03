@@ -1,0 +1,161 @@
+﻿{
+    "timestamp":  "2025-09-30 02:53:34",
+    "failed_tests":  2,
+    "total_tests":  14,
+    "test_results":  [
+                         {
+                             "Test":  "RAG Chatbot Health Check",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "23.3939ms",
+                             "ResponseSize":  44,
+                             "Response":  {
+                                              "status":  "healthy",
+                                              "service":  "rag-chatbot"
+                                          }
+                         },
+                         {
+                             "Test":  "Node.js Backend Health Check",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "22.5067ms",
+                             "ResponseSize":  105,
+                             "Response":  {
+                                              "status":  "OK",
+                                              "timestamp":  "2025-09-30T01:51:53.994Z",
+                                              "uptime":  1122.801594371,
+                                              "environment":  "production"
+                                          }
+                         },
+                         {
+                             "Test":  "ChromaDB Health Check",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "25.2874ms",
+                             "ResponseSize":  7,
+                             "Response":  "1.0.0"
+                         },
+                         {
+                             "Test":  "Ollama Health Check",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "20.9279ms",
+                             "ResponseSize":  20,
+                             "Response":  {
+                                              "version":  "0.11.5"
+                                          }
+                         },
+                         {
+                             "Test":  "Check Available Models",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "20.1262ms",
+                             "ResponseSize":  336,
+                             "Response":  {
+                                              "models":  ""
+                                          }
+                         },
+                         {
+                             "Test":  "List ChromaDB Collections",
+                             "Status":  "ERROR",
+                             "StatusCode":  "N/A",
+                             "Duration":  "N/A",
+                             "ResponseSize":  0,
+                             "Response":  "The remote server returned an error: (404) Not Found."
+                         },
+                         {
+                             "Test":  "Simple Chat Query",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "20973.1551ms",
+                             "ResponseSize":  398,
+                             "Response":  {
+                                              "response":  "The president did not mention Michael Jackson in any of the provided texts. Therefore, the answer to the question \"What did the president say about Michael Jackson?\" is that he did not say anything about him.\n\nHere are the sources for the final answer:\n\n* None of the provided texts mention Michael Jackson.",
+                                              "sources":  "",
+                                              "conversation_id":  "f2f047c3-47a0-40de-a19f-3c62edc54bb7"
+                                          }
+                         },
+                         {
+                             "Test":  "Business Context Query",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "52349.5953ms",
+                             "ResponseSize":  893,
+                             "Response":  {
+                                              "response":  "I\u0027m just an AI, I don\u0027t have access to external information or the ability to browse the internet, so I cannot provide information about invoice processing. However, I can suggest some general resources that may be helpful for you:\n\n* Accounting Principles: This website provides a comprehensive guide to accounting principles and practices, including invoicing and accounts receivable management.\n* Investopedia: This website offers a variety of resources on financial topics, including invoice processing and accounts payable management.\n* Small Business Trends: This website provides news, advice, and resources for small business owners, including articles on invoice processing and accounts receivable management.\n\nI hope these suggestions are helpful! Let me know if you have any other questions.",
+                                              "sources":  "",
+                                              "conversation_id":  "a23913a4-7e1e-457c-bc97-5d46d9bc16fc"
+                                          }
+                         },
+                         {
+                             "Test":  "Conversation Continuation",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "28229.3001ms",
+                             "ResponseSize":  405,
+                             "Response":  {
+                                              "response":  "The final answer is no, the president did not mention Michael Jackson in the provided text.\n\nThe sources for this answer are:\n\n* 0-pl (no mention of Michael Jackson)\n* 24-pl (no mention of Michael Jackson)\n* 34-pl (no mention of Michael Jackson)\n\nI hope this helps! Let me know if you have any further questions.",
+                                              "sources":  "",
+                                              "conversation_id":  "f2f047c3-47a0-40de-a19f-3c62edc54bb7"
+                                          }
+                         },
+                         {
+                             "Test":  "Start Data Indexing",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "2575.5618ms",
+                             "ResponseSize":  141,
+                             "Response":  {
+                                              "status":  "processing",
+                                              "task_id":  "80c130ca-bc70-4e40-a8c2-a8da990d54eb",
+                                              "message":  "Indexing test_documents data",
+                                              "error":  null,
+                                              "details":  null
+                                          }
+                         },
+                         {
+                             "Test":  "Check Indexing Status",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "2682.408ms",
+                             "ResponseSize":  137,
+                             "Response":  {
+                                              "status":  "processing",
+                                              "task_id":  "80c130ca-bc70-4e40-a8c2-a8da990d54eb",
+                                              "message":  "Task is still processing",
+                                              "error":  null,
+                                              "details":  null
+                                          }
+                         },
+                         {
+                             "Test":  "Get Conversation History",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "17.9492ms",
+                             "ResponseSize":  2,
+                             "Response":  "[]..."
+                         },
+                         {
+                             "Test":  "Invalid Endpoint (404)",
+                             "Status":  "ERROR",
+                             "StatusCode":  "N/A",
+                             "Duration":  "N/A",
+                             "ResponseSize":  0,
+                             "Response":  "The remote server returned an error: (404) Not Found."
+                         },
+                         {
+                             "Test":  "Empty Query Handling",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "14.2449ms",
+                             "ResponseSize":  169,
+                             "Response":  {
+                                              "response":  "I\u0027m sorry, but your query appears to be empty. Please provide a question or request.",
+                                              "sources":  "",
+                                              "conversation_id":  "e9df3c62-ffcd-4279-a78b-c50de62ca198"
+                                          }
+                         }
+                     ],
+    "passed_tests":  12,
+    "success_rate":  85.71
+}

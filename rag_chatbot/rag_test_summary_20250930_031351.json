@@ -1,0 +1,161 @@
+﻿{
+    "timestamp":  "2025-09-30 03:13:51",
+    "failed_tests":  0,
+    "total_tests":  14,
+    "test_results":  [
+                         {
+                             "Test":  "RAG Chatbot Health Check",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "173.876ms",
+                             "ResponseSize":  44,
+                             "Response":  {
+                                              "status":  "healthy",
+                                              "service":  "rag-chatbot"
+                                          }
+                         },
+                         {
+                             "Test":  "Node.js Backend Health Check",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "33.397ms",
+                             "ResponseSize":  105,
+                             "Response":  {
+                                              "status":  "OK",
+                                              "timestamp":  "2025-09-30T02:12:28.753Z",
+                                              "uptime":  2256.581464506,
+                                              "environment":  "production"
+                                          }
+                         },
+                         {
+                             "Test":  "ChromaDB Health Check",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "49.4024ms",
+                             "ResponseSize":  7,
+                             "Response":  "1.0.0"
+                         },
+                         {
+                             "Test":  "Ollama Health Check",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "36.4695ms",
+                             "ResponseSize":  20,
+                             "Response":  {
+                                              "version":  "0.11.5"
+                                          }
+                         },
+                         {
+                             "Test":  "Check Available Models",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "30.689ms",
+                             "ResponseSize":  336,
+                             "Response":  {
+                                              "models":  ""
+                                          }
+                         },
+                         {
+                             "Test":  "List ChromaDB Collections",
+                             "Status":  "PASS",
+                             "StatusCode":  404,
+                             "Duration":  "2.0021ms",
+                             "ResponseSize":  53,
+                             "Response":  "The remote server returned an error: (404) Not Found."
+                         },
+                         {
+                             "Test":  "Simple Chat Query",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "13946.8017ms",
+                             "ResponseSize":  281,
+                             "Response":  {
+                                              "response":  "The question \"What did the president say about Michael Jackson?\" does not appear in any of the provided documents or sources, so the answer is that the president did not mention Michael Jackson.",
+                                              "sources":  "",
+                                              "conversation_id":  "83305633-6bda-4b2c-af2e-507b94585c24"
+                                          }
+                         },
+                         {
+                             "Test":  "Business Context Query",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "39215.5332ms",
+                             "ResponseSize":  571,
+                             "Response":  {
+                                              "response":  "The final answer to the question \"What did the president say about Michael Jackson?\" is that the president did not mention Michael Jackson.\n\nThe sources for this answer are:\n\n* 0-pl: The president\u0027s speech does not mention Michael Jackson.\n* 24-pl: The president\u0027s speech does not mention Michael Jackson.\n* 34-pl: The president\u0027s speech does not mention Michael Jackson.\n\nTherefore, the answer to the question is that the president did not say anything about Michael Jackson.",
+                                              "sources":  "",
+                                              "conversation_id":  "57ca3eee-61ac-4051-b1dc-be879b751d4d"
+                                          }
+                         },
+                         {
+                             "Test":  "Conversation Continuation",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "28197.9406ms",
+                             "ResponseSize":  386,
+                             "Response":  {
+                                              "response":  "The question \"What did the president say about Michael Jackson?\" is based on a false premise, as there is no information in the provided text to suggest that the president made any mention of Michael Jackson. Therefore, the answer is \"The president did not say anything about Michael Jackson.\"\n\n",
+                                              "sources":  "",
+                                              "conversation_id":  "83305633-6bda-4b2c-af2e-507b94585c24"
+                                          }
+                         },
+                         {
+                             "Test":  "Start Data Indexing",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "2629.1591ms",
+                             "ResponseSize":  141,
+                             "Response":  {
+                                              "status":  "processing",
+                                              "task_id":  "0e4b47ea-0d89-4735-b1b5-7f1cc2ecdc6a",
+                                              "message":  "Indexing test_documents data",
+                                              "error":  null,
+                                              "details":  null
+                                          }
+                         },
+                         {
+                             "Test":  "Check Indexing Status",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "2713.1033ms",
+                             "ResponseSize":  137,
+                             "Response":  {
+                                              "status":  "processing",
+                                              "task_id":  "0e4b47ea-0d89-4735-b1b5-7f1cc2ecdc6a",
+                                              "message":  "Task is still processing",
+                                              "error":  null,
+                                              "details":  null
+                                          }
+                         },
+                         {
+                             "Test":  "Get Conversation History",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "27.58ms",
+                             "ResponseSize":  2,
+                             "Response":  "[]..."
+                         },
+                         {
+                             "Test":  "Invalid Endpoint (404)",
+                             "Status":  "PASS",
+                             "StatusCode":  404,
+                             "Duration":  "15.8679ms",
+                             "ResponseSize":  53,
+                             "Response":  "The remote server returned an error: (404) Not Found."
+                         },
+                         {
+                             "Test":  "Empty Query Handling",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "26.7292ms",
+                             "ResponseSize":  169,
+                             "Response":  {
+                                              "response":  "I\u0027m sorry, but your query appears to be empty. Please provide a question or request.",
+                                              "sources":  "",
+                                              "conversation_id":  "9d25234a-1abe-4de0-8af3-1c6fb1a23a7e"
+                                          }
+                         }
+                     ],
+    "passed_tests":  14,
+    "success_rate":  100
+}

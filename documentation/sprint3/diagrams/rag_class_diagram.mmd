@@ -1,0 +1,77 @@
+%% Diagramme de classes du microservice RAG Chatbot
+classDiagram
+    class FastAPIApp {
+        +chat(request: ChatRequest) ChatResponse
+        +index_data(request: IndexingRequest) IndexingResponse
+        +health_check() dict
+    }
+    class ChatService {
+        +process_query(query, conversation_id, context) dict
+        +get_conversation_history(conversation_id) list
+        -embeddings: HuggingFaceEmbeddings
+        -vector_store: Chroma
+        -llm: Ollama
+    }
+    class IndexingService {
+        +index_data(data_type) dict
+        +get_task_status(task_id) dict
+        +rebuild_index(enterprise_id)
+        -vector_store: Chroma
+        -text_splitter: RecursiveCharacterTextSplitter
+    }
+    class Settings {
+        +API_V1_STR
+        +VECTOR_STORE_PATH
+        +OLLAMA_BASE_URL
+        +OLLAMA_MODEL
+        +DATABASE_URL
+        +CELERY_BROKER_URL
+    }
+    class ChatRequest {
+        +query: str
+        +conversation_id: Optional[str]
+        +context: Optional[dict]
+    }
+    class ChatResponse {
+        +response: str
+        +sources: list
+        +conversation_id: str
+    }
+    class IndexingRequest {
+        +data_type: str
+        +options: Optional[dict]
+    }
+    class IndexingResponse {
+        +status: str
+        +task_id: str
+        +message: Optional[str]
+        +error: Optional[str]
+    }
+    class Ollama {
+        <<Service LLM>>
+    }
+    class ChromaDB {
+        <<Vector Store>>
+    }
+    class HuggingFaceEmbeddings {
+        <<Embeddings>>
+    }
+    class CeleryWorker {
+        <<Tâches asynchrones>>
+    }
+
+    FastAPIApp --> ChatService : "Dépendance"
+    FastAPIApp --> IndexingService : "Dépendance"
+    ChatService ..> Ollama : "Appels LLM"
+    ChatService ..> ChromaDB : "Recherche"
+    ChatService ..> HuggingFaceEmbeddings
+    ChatService ..> Settings
+    ChatService ..> CeleryWorker
+    IndexingService ..> ChromaDB : "Métadonnées"
+    IndexingService ..> HuggingFaceEmbeddings
+    IndexingService ..> CeleryWorker : "Tâches"
+    IndexingService ..> Settings
+    ChatRequest --> ChatService
+    ChatResponse <-- ChatService
+    IndexingRequest --> IndexingService
+    IndexingResponse <-- IndexingService

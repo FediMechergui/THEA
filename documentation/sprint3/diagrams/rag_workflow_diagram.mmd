@@ -1,0 +1,19 @@
+%% Diagramme de flux du microservice RAG Chatbot
+flowchart TD
+    Client["Client UI / Tests"] -->|POST /api/v1/chat| RouteChat["FastAPI Router /chat"]
+    RouteChat --> ServiceChat["ChatService.process_query"]
+    ServiceChat --> Validation{Requête valide ?}
+    Validation -- Non --> ReponseVide["Message d'erreur convivial"]
+    ReponseVide --> Sortie["Réponse JSON"]
+    Validation -- Oui --> Contexte["Enrichissement du contexte"]
+    Contexte --> Recuperation["ChromaDB : recherche vectorielle"]
+    Recuperation --> Generation["Ollama : génération de réponse"]
+    Generation --> Formatage["Agrégation des sources & métadonnées"]
+    Formatage --> Historique[("Redis / Stockage conversationnel")]
+    Historique --> Sortie
+    Generation -.-> Logs[("Logging & métriques Prometheus")]
+    RouteChat --> Observabilite["Instrumentator Prometheus"]
+    Observabilite -.-> Logs
+    Sortie --> Feedback{"Demande suivante ?"}
+    Feedback -- Oui --> RouteChat
+    Feedback -- Non --> Fin(("Fin de l'échange"))

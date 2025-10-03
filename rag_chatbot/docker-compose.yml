@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   app:
     build:
@@ -10,17 +8,14 @@ services:
     volumes:
       - ./app:/app/app
       - ./data:/app/data
-    environment:
-      - REDIS_URL=redis://redis:6379/0
-      - NODE_BACKEND_URL=http://nodejs-backend:3000
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-      - DATABASE_URL=postgresql://user:password@postgres:5432/thea
-      - MODEL_PATH=/app/models
+    env_file:
+      - .env.docker
     depends_on:
       - redis
       - postgres
       - vector_store
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   celery_worker:
     build:
@@ -30,17 +25,14 @@ services:
     volumes:
       - ./app:/app/app
       - ./data:/app/data
-    environment:
-      - REDIS_URL=redis://redis:6379/0
-      - NODE_BACKEND_URL=http://nodejs-backend:3000
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-      - DATABASE_URL=postgresql://user:password@postgres:5432/thea
-      - MODEL_PATH=/app/models
+    env_file:
+      - .env.docker
     depends_on:
       - redis
       - postgres
       - vector_store
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   redis:
     image: redis:alpine

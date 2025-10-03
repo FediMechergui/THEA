@@ -1,0 +1,118 @@
+sequenceDiagram
+    participant Server
+    participant ServiceInitializer
+    participant DatabaseConfig
+    participant RedisService
+    participant MinioService
+    participant RabbitMQService
+    participant Logger
+    participant MySQL
+    participant Redis
+    participant MinIO
+    participant RabbitMQ
+
+    %% Server Startup Flow
+    rect rgb(240, 248, 255)
+        Note over Server, RabbitMQ: Server Startup & Service Initialization
+        Server->>Server: load environment variables
+        Server->>Logger: initialize logger
+        Logger-->>Server: logger ready
+
+        Server->>Server: create Express app
+        Server->>Server: configure middleware (helmet, cors, rate-limit)
+        Server->>Server: setup routes
+        Server->>Server: configure error handlers
+
+        Server->>ServiceInitializer: initializeServices()
+        ServiceInitializer->>Logger: log initialization start
+
+        %% Database Initialization
+        ServiceInitializer->>DatabaseConfig: initializeDatabase()
+        DatabaseConfig->>DatabaseConfig: create Prisma client
+        DatabaseConfig->>MySQL: testConnection()
+        MySQL-->>DatabaseConfig: connection successful
+        DatabaseConfig->>DatabaseConfig: run database queries test
+        MySQL-->>DatabaseConfig: queries successful
+        DatabaseConfig->>Logger: database ready
+        DatabaseConfig-->>ServiceInitializer: database initialized
+
+        %% Redis Initialization
+        ServiceInitializer->>RedisService: initializeRedis()
+        RedisService->>RedisService: create Redis client
+        RedisService->>Redis: connect to Redis
+        Redis-->>RedisService: connection established
+        RedisService->>Redis: test ping
+        Redis-->>RedisService: PONG
+        RedisService->>Logger: Redis ready
+        RedisService-->>ServiceInitializer: Redis initialized
+
+        %% MinIO Initialization
+        ServiceInitializer->>MinioService: initializeMinIO()
+        MinioService->>MinioService: create MinIO client
+        MinioService->>MinIO: connect to MinIO
+        MinIO-->>MinioService: connection established
+        MinioService->>MinIO: test bucket access
+        MinIO-->>MinioService: bucket accessible
+        MinioService->>Logger: MinIO ready
+        MinioService-->>ServiceInitializer: MinIO initialized
+
+        %% RabbitMQ Initialization
+        ServiceInitializer->>RabbitMQService: initializeRabbitMQ()
+        RabbitMQService->>RabbitMQService: create connection
+        RabbitMQService->>RabbitMQ: connect to RabbitMQ
+        RabbitMQ-->>RabbitMQService: connection established
+        RabbitMQService->>RabbitMQ: create channel
+        RabbitMQ-->>RabbitMQService: channel created
+        RabbitMQService->>RabbitMQ: declare queues
+        RabbitMQ-->>RabbitMQService: queues declared
+        RabbitMQService->>Logger: RabbitMQ ready
+        RabbitMQService-->>ServiceInitializer: RabbitMQ initialized
+
+        ServiceInitializer->>Logger: all services initialized
+        ServiceInitializer-->>Server: services ready
+    end
+
+    %% Server Listening
+    rect rgb(255, 248, 240)
+        Note over Server, Logger: Server Listening
+        Server->>Server: start HTTP server
+        Server->>Logger: server started on port ${PORT}
+        Server->>Logger: health check endpoint available
+        Server->>Logger: environment: ${NODE_ENV}
+    end
+
+    %% Graceful Shutdown Flow
+    rect rgb(248, 240, 255)
+        Note over Server, RabbitMQ: Graceful Shutdown
+        Server->>Server: receive SIGTERM/SIGINT
+        Server->>Logger: shutdown initiated
+
+        Server->>ServiceInitializer: shutdownServices()
+        ServiceInitializer->>Logger: shutting down services
+
+        ServiceInitializer->>RabbitMQService: close RabbitMQ connection
+        RabbitMQService->>RabbitMQ: close channel & connection
+        RabbitMQ-->>RabbitMQService: connection closed
+        RabbitMQService->>Logger: RabbitMQ shut down
+
+        ServiceInitializer->>MinioService: close MinIO connection
+        MinioService->>MinIO: close client
+        MinIO-->>MinioService: client closed
+        MinioService->>Logger: MinIO shut down
+
+        ServiceInitializer->>RedisService: close Redis connection
+        RedisService->>Redis: disconnect client
+        Redis-->>RedisService: client disconnected
+        RedisService->>Logger: Redis shut down
+
+        ServiceInitializer->>DatabaseConfig: close database connection
+        DatabaseConfig->>MySQL: disconnect Prisma client
+        MySQL-->>DatabaseConfig: client disconnected
+        DatabaseConfig->>Logger: database shut down
+
+        ServiceInitializer->>Logger: all services shut down
+        ServiceInitializer-->>Server: shutdown complete
+
+        Server->>Server: exit process
+        Server->>Logger: server shut down gracefully
+    end

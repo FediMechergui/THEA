@@ -1,7 +1,7 @@
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import Chroma
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import Chroma
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.document_loaders import JSONLoader
+from langchain_community.document_loaders import JSONLoader
 from ..worker import celery
 import json
 import logging
@@ -26,7 +26,7 @@ class IndexingService:
             chunk_overlap=200
         )
 
-    @celery.task
+    @celery.task(bind=True)
     def index_data(self, data_type: str) -> Dict[str, Any]:
         """
         Index data from the Node.js backend into the vector store

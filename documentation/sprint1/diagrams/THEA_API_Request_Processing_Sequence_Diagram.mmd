@@ -1,0 +1,134 @@
+sequenceDiagram
+    participant Client
+    participant Express
+    participant RateLimiter
+    participant RequestLogger
+    participant CORSMiddleware
+    participant HelmetMiddleware
+    participant RouteHandler
+    participant AuthMiddleware
+    participant BusinessLogic
+    participant Database
+    participant ExternalServices
+    participant ErrorHandler
+    participant ResponseLogger
+
+    %% API Request Processing Flow
+    rect rgb(240, 255, 248)
+        Note over Client, ResponseLogger: Complete API Request Processing Flow
+
+        %% Initial Request Handling
+        Client->>Express: HTTP Request (GET/POST/PUT/DELETE)
+        Express->>RateLimiter: check rate limit
+        RateLimiter->>RateLimiter: validate request count
+        alt Rate limit exceeded
+            RateLimiter-->>Client: 429 Too Many Requests
+        else Within limits
+            RateLimiter->>Express: proceed
+        end
+
+        Express->>RequestLogger: log incoming request
+        RequestLogger->>RequestLogger: format and log request details
+        RequestLogger->>Express: proceed
+
+        Express->>CORSMiddleware: check CORS policy
+        CORSMiddleware->>CORSMiddleware: validate origin & headers
+        alt CORS violation
+            CORSMiddleware-->>Client: CORS error
+        else CORS allowed
+            CORSMiddleware->>Express: proceed
+        end
+
+        Express->>HelmetMiddleware: apply security headers
+        HelmetMiddleware->>HelmetMiddleware: set security headers
+        HelmetMiddleware->>Express: proceed
+
+        %% Route Matching
+        Express->>RouteHandler: match route pattern
+        alt Route not found
+            Express->>ErrorHandler: 404 Not Found
+            ErrorHandler-->>Client: 404 response
+        else Route found
+            RouteHandler->>Express: proceed to route
+        end
+
+        %% Authentication & Authorization
+        Express->>AuthMiddleware: check authentication
+        alt Requires auth
+            AuthMiddleware->>AuthMiddleware: extract JWT token
+            AuthMiddleware->>AuthMiddleware: verify token signature
+            alt Invalid token
+                AuthMiddleware->>ErrorHandler: 401 Unauthorized
+                ErrorHandler-->>Client: 401 response
+            else Valid token
+                AuthMiddleware->>Database: fetch user data
+                Database-->>AuthMiddleware: user & enterprise data
+                alt User not found
+                    AuthMiddleware->>ErrorHandler: 401 Unauthorized
+                else User valid
+                    AuthMiddleware->>AuthMiddleware: check role permissions
+                    alt Insufficient permissions
+                        AuthMiddleware->>ErrorHandler: 403 Forbidden
+                    else Authorized
+                        AuthMiddleware->>Express: add user to request
+                    end
+                end
+            end
+        else Public route
+            AuthMiddleware->>Express: proceed (no auth required)
+        end
+
+        %% Business Logic Processing
+        Express->>BusinessLogic: execute route handler
+        BusinessLogic->>BusinessLogic: validate request data
+        alt Validation failed
+            BusinessLogic->>ErrorHandler: 400 Bad Request
+            ErrorHandler-->>Client: validation errors
+        else Validation passed
+            BusinessLogic->>Database: perform database operations
+            Database-->>BusinessLogic: query results
+
+            alt Requires external services
+                BusinessLogic->>ExternalServices: call Redis/MinIO/RabbitMQ
+                ExternalServices-->>BusinessLogic: service response
+            end
+
+            BusinessLogic->>BusinessLogic: process business logic
+            BusinessLogic->>Database: save/update data
+            Database-->>BusinessLogic: operation result
+        end
+
+        %% Response Generation
+        BusinessLogic->>Express: return response data
+        Express->>ResponseLogger: log response
+        ResponseLogger->>ResponseLogger: format and log response details
+        ResponseLogger->>Express: proceed
+
+        Express->>Client: HTTP Response (200/201/204 etc.)
+    end
+
+    %% Error Handling Flow
+    rect rgb(255, 240, 248)
+        Note over BusinessLogic, Client: Error Handling Flow
+        BusinessLogic->>ErrorHandler: throw/catch error
+        ErrorHandler->>ErrorHandler: determine error type
+        ErrorHandler->>ErrorHandler: format error response
+        alt Operational error
+            ErrorHandler->>ErrorHandler: log error details
+            ErrorHandler-->>Client: appropriate HTTP status + error message
+        else Programmer error
+            ErrorHandler->>ErrorHandler: log full stack trace
+            ErrorHandler-->>Client: 500 Internal Server Error
+        end
+    end
+
+    %% Health Check Flow
+    rect rgb(248, 255, 240)
+        Note over Client, Express: Health Check Flow
+        Client->>Express: GET /health
+        Express->>Express: bypass rate limiting (health endpoint)
+        Express->>RequestLogger: log health check
+        Express->>Express: generate health response
+        Express->>ResponseLogger: log health response
+        Express-->>Client: 200 OK + health data
+    end

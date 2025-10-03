@@ -1,0 +1,113 @@
+sequenceDiagram
+    participant Client
+    participant Express
+    participant InvoiceRoutes
+    participant AuthMiddleware
+    participant Multer
+    participant Database
+    participant MinIO
+    participant RabbitMQ
+    participant Redis
+    participant FastAPI_OCR
+    participant Logger
+
+    %% Invoice Upload and Creation Flow
+    rect rgb(240, 255, 248)
+        Note over Client, Logger: Invoice Creation Flow
+        Client->>Express: POST /api/invoices (multipart/form-data)
+        Express->>AuthMiddleware: authenticateToken
+        AuthMiddleware->>Database: validate user & enterprise
+        Database-->>AuthMiddleware: user data
+        AuthMiddleware->>Express: proceed with request
+
+        Express->>Multer: handle file upload
+        Multer->>Multer: validate file type & size
+        Multer-->>Express: file saved to temp
+
+        Express->>InvoiceRoutes: process invoice creation
+        InvoiceRoutes->>InvoiceRoutes: validate request data
+        InvoiceRoutes->>Database: create invoice record
+        Database-->>InvoiceRoutes: invoice ID
+
+        InvoiceRoutes->>MinIO: upload file to storage
+        MinIO-->>InvoiceRoutes: file URL
+        InvoiceRoutes->>Database: update invoice with scanUrl
+
+        InvoiceRoutes->>RabbitMQ: publish OCR processing message
+        RabbitMQ-->>InvoiceRoutes: message queued
+
+        InvoiceRoutes->>Redis: cache invoice data (TTL)
+        InvoiceRoutes->>Logger: log invoice creation
+        InvoiceRoutes-->>Client: 201 Created + invoice data
+    end
+
+    %% OCR Processing Flow (Async)
+    rect rgb(255, 248, 240)
+        Note over FastAPI_OCR, Logger: OCR Processing Flow
+        RabbitMQ->>FastAPI_OCR: consume OCR message
+        FastAPI_OCR->>MinIO: download invoice file
+        MinIO-->>FastAPI_OCR: file stream
+        FastAPI_OCR->>FastAPI_OCR: perform OCR analysis
+        FastAPI_OCR->>FastAPI_OCR: extract invoice data
+        FastAPI_OCR->>Database: update invoice with extractedData
+        FastAPI_OCR->>RabbitMQ: publish verification message
+        FastAPI_OCR->>Logger: log OCR completion
+    end
+
+    %% Invoice Verification Flow
+    rect rgb(248, 240, 255)
+        Note over Client, Logger: Invoice Verification Flow
+        Client->>Express: POST /api/invoices/:id/verify
+        Express->>AuthMiddleware: authenticateToken + requireRole(VERIFIER)
+        AuthMiddleware->>Database: check user role
+        Database-->>AuthMiddleware: role verification
+        AuthMiddleware->>Express: proceed
+
+        Express->>InvoiceRoutes: verify invoice
+        InvoiceRoutes->>Database: get invoice details
+        Database-->>InvoiceRoutes: invoice data
+        InvoiceRoutes->>InvoiceRoutes: perform verification logic
+        InvoiceRoutes->>Database: update verificationStatus
+        InvoiceRoutes->>Database: create audit log
+        InvoiceRoutes->>Redis: update cached data
+        InvoiceRoutes->>Logger: log verification
+        InvoiceRoutes-->>Client: 200 OK + updated invoice
+    end
+
+    %% Invoice Download Flow
+    rect rgb(255, 248, 255)
+        Note over Client, MinIO: Invoice Download Flow
+        Client->>Express: GET /api/invoices/:id/download
+        Express->>AuthMiddleware: authenticateToken + enterprise access
+        AuthMiddleware->>Database: validate access
+        Database-->>AuthMiddleware: access granted
+        AuthMiddleware->>Express: proceed
+
+        Express->>InvoiceRoutes: handle download
+        InvoiceRoutes->>Database: get invoice scanUrl
+        Database-->>InvoiceRoutes: file URL
+        InvoiceRoutes->>MinIO: generate presigned URL
+        MinIO-->>InvoiceRoutes: presigned URL
+        InvoiceRoutes->>Logger: log download access
+        InvoiceRoutes-->>Client: 302 Redirect to presigned URL
+    end
+
+    %% Invoice Status Update Flow
+    rect rgb(248, 255, 248)
+        Note over Client, Logger: Invoice Status Update Flow
+        Client->>Express: PUT /api/invoices/:id
+        Express->>AuthMiddleware: authenticateToken
+        AuthMiddleware->>Database: validate user
+        Database-->>AuthMiddleware: user validated
+        AuthMiddleware->>Express: proceed
+
+        Express->>InvoiceRoutes: update invoice
+        InvoiceRoutes->>Database: get current invoice
+        Database-->>InvoiceRoutes: current data
+        InvoiceRoutes->>InvoiceRoutes: validate update permissions
+        InvoiceRoutes->>Database: update invoice record
+        InvoiceRoutes->>Database: create audit log
+        InvoiceRoutes->>Redis: invalidate/update cache
+        InvoiceRoutes->>Logger: log update
+        InvoiceRoutes-->>Client: 200 OK + updated invoice
+    end

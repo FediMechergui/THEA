@@ -1,0 +1,152 @@
+﻿{
+    "timestamp":  "2025-09-30 02:23:25",
+    "failed_tests":  0,
+    "total_tests":  0,
+    "test_results":  [
+                         {
+                             "Test":  "RAG Chatbot Health Check",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "23.831ms",
+                             "ResponseSize":  44,
+                             "Response":  {
+                                              "status":  "healthy",
+                                              "service":  "rag-chatbot"
+                                          }
+                         },
+                         {
+                             "Test":  "Node.js Backend Health Check",
+                             "Status":  "ERROR",
+                             "StatusCode":  "N/A",
+                             "Duration":  "N/A",
+                             "ResponseSize":  0,
+                             "Response":  "Unable to connect to the remote server"
+                         },
+                         {
+                             "Test":  "ChromaDB Health Check",
+                             "Status":  "ERROR",
+                             "StatusCode":  "N/A",
+                             "Duration":  "N/A",
+                             "ResponseSize":  0,
+                             "Response":  "The remote server returned an error: (410) Gone."
+                         },
+                         {
+                             "Test":  "Ollama Health Check",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "32.8845ms",
+                             "ResponseSize":  20,
+                             "Response":  {
+                                              "version":  "0.11.5"
+                                          }
+                         },
+                         {
+                             "Test":  "Check Available Models",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "29.1523ms",
+                             "ResponseSize":  336,
+                             "Response":  {
+                                              "models":  ""
+                                          }
+                         },
+                         {
+                             "Test":  "List ChromaDB Collections",
+                             "Status":  "ERROR",
+                             "StatusCode":  "N/A",
+                             "Duration":  "N/A",
+                             "ResponseSize":  0,
+                             "Response":  "The remote server returned an error: (410) Gone."
+                         },
+                         {
+                             "Test":  "Simple Chat Query",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "23639.7553ms",
+                             "ResponseSize":  347,
+                             "Response":  {
+                                              "response":  "The answer to the question \"What did the president say about Michael Jackson?\" is that the president did not mention Michael Jackson in any of the provided texts. Therefore, the final answer is that the president did not say anything about Michael Jackson.\n\n",
+                                              "sources":  "",
+                                              "conversation_id":  "4a00e006-9dfe-4a9c-9a4f-f2ce395e4006"
+                                          }
+                         },
+                         {
+                             "Test":  "Business Context Query",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "49139.0241ms",
+                             "ResponseSize":  850,
+                             "Response":  {
+                                              "response":  "I\u0027m just an AI and do not have access to external information or sources beyond what is provided in the text. Therefore, I cannot provide answers to questions that are not present in the given document. Additionally, I am programmed to always provide accurate and reliable information, and therefore, I will not provide answers that are not supported by evidence or are based on speculative or fictional information.\n\nIn this case, the document provided contains information related to business and legal matters, but it does not mention anything about invoice processing. Therefore, I cannot provide any information or sources related to invoice processing. If you have any other questions or topics you would like me to assist you with, please feel free to ask.",
+                                              "sources":  "",
+                                              "conversation_id":  "526f9b41-925e-448a-81fb-1204a98cfe73"
+                                          }
+                         },
+                         {
+                             "Test":  "Conversation Continuation",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "33773.4403ms",
+                             "ResponseSize":  331,
+                             "Response":  {
+                                              "response":  "The question \"What did the president say about Michael Jackson?\" is based on a false premise, as there is no information in the provided text about Michael Jackson. Therefore, the answer is \"The president did not mention Michael Jackson.\"\n\n",
+                                              "sources":  "",
+                                              "conversation_id":  "4a00e006-9dfe-4a9c-9a4f-f2ce395e4006"
+                                          }
+                         },
+                         {
+                             "Test":  "Start Data Indexing",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "2357.1762ms",
+                             "ResponseSize":  141,
+                             "Response":  {
+                                              "status":  "processing",
+                                              "task_id":  "c293c9ec-4a19-4e8b-8e2a-2c67d42e4027",
+                                              "message":  "Indexing test_documents data",
+                                              "error":  null,
+                                              "details":  null
+                                          }
+                         },
+                         {
+                             "Test":  "Check Indexing Status",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "2485.1526ms",
+                             "ResponseSize":  137,
+                             "Response":  {
+                                              "status":  "processing",
+                                              "task_id":  "c293c9ec-4a19-4e8b-8e2a-2c67d42e4027",
+                                              "message":  "Task is still processing",
+                                              "error":  null,
+                                              "details":  null
+                                          }
+                         },
+                         {
+                             "Test":  "Get Conversation History",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "2519.3379ms",
+                             "ResponseSize":  2,
+                             "Response":  "[]..."
+                         },
+                         {
+                             "Test":  "Invalid Endpoint (404)",
+                             "Status":  "ERROR",
+                             "StatusCode":  "N/A",
+                             "Duration":  "N/A",
+                             "ResponseSize":  0,
+                             "Response":  "The remote server returned an error: (404) Not Found."
+                         },
+                         {
+                             "Test":  "Empty Query Handling",
+                             "Status":  "ERROR",
+                             "StatusCode":  "N/A",
+                             "Duration":  "N/A",
+                             "ResponseSize":  0,
+                             "Response":  "The request was aborted: The operation has timed out."
+                         }
+                     ],
+    "passed_tests":  0,
+    "success_rate":  0
+}

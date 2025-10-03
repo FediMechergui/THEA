@@ -1,0 +1,21 @@
+"Test","Status","StatusCode","Duration","ResponseSize","Response"
+"RAG Chatbot Health Check","PASS","200","23.831ms","44","@{status=healthy; service=rag-chatbot}"
+"Node.js Backend Health Check","ERROR","N/A","N/A","0","Unable to connect to the remote server"
+"ChromaDB Health Check","ERROR","N/A","N/A","0","The remote server returned an error: (410) Gone."
+"Ollama Health Check","PASS","200","32.8845ms","20","@{version=0.11.5}"
+"Check Available Models","PASS","200","29.1523ms","336","@{models=System.Object[]}"
+"List ChromaDB Collections","ERROR","N/A","N/A","0","The remote server returned an error: (410) Gone."
+"Simple Chat Query","PASS","200","23639.7553ms","347","@{response=The answer to the question ""What did the president say about Michael Jackson?"" is that the president did not mention Michael Jackson in any of the provided texts. Therefore, the final answer is that the president did not say anything about Michael Jackson.
+
+; sources=System.Object[]; conversation_id=4a00e006-9dfe-4a9c-9a4f-f2ce395e4006}"
+"Business Context Query","PASS","200","49139.0241ms","850","@{response=I'm just an AI and do not have access to external information or sources beyond what is provided in the text. Therefore, I cannot provide answers to questions that are not present in the given document. Additionally, I am programmed to always provide accurate and reliable information, and therefore, I will not provide answers that are not supported by evidence or are based on speculative or fictional information.
+
+In this case, the document provided contains information related to business and legal matters, but it does not mention anything about invoice processing. Therefore, I cannot provide any information or sources related to invoice processing. If you have any other questions or topics you would like me to assist you with, please feel free to ask.; sources=System.Object[]; conversation_id=526f9b41-925e-448a-81fb-1204a98cfe73}"
+"Conversation Continuation","PASS","200","33773.4403ms","331","@{response=The question ""What did the president say about Michael Jackson?"" is based on a false premise, as there is no information in the provided text about Michael Jackson. Therefore, the answer is ""The president did not mention Michael Jackson.""
+
+; sources=System.Object[]; conversation_id=4a00e006-9dfe-4a9c-9a4f-f2ce395e4006}"
+"Start Data Indexing","PASS","200","2357.1762ms","141","@{status=processing; task_id=c293c9ec-4a19-4e8b-8e2a-2c67d42e4027; message=Indexing test_documents data; error=; details=}"
+"Check Indexing Status","PASS","200","2485.1526ms","137","@{status=processing; task_id=c293c9ec-4a19-4e8b-8e2a-2c67d42e4027; message=Task is still processing; error=; details=}"
+"Get Conversation History","PASS","200","2519.3379ms","2","[]..."
+"Invalid Endpoint (404)","ERROR","N/A","N/A","0","The remote server returned an error: (404) Not Found."
+"Empty Query Handling","ERROR","N/A","N/A","0","The request was aborted: The operation has timed out."

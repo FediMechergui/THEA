@@ -1,0 +1,6 @@
+"Test","Success","StatusCode","Duration","ResponseSize"
+"Health Check","True","200","0.0925638s","44"
+"Basic Chat","False","Error","27.8474511s","0"
+"Business Domain Chat","False","Error","33.0939992s","0"
+"Data Indexing","False","Error","2.7671574s","0"
+"Empty Query Validation","False","Error","Quick","0"

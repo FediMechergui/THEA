@@ -1,0 +1,44 @@
+"Test","Status","StatusCode","Duration","ResponseSize","Response"
+"RAG Chatbot Health Check","PASS","200","24.3214ms","44","@{status=healthy; service=rag-chatbot}"
+"Node.js Backend Health Check","PASS","200","26.6668ms","105","@{status=OK; timestamp=2025-09-30T01:56:31.609Z; uptime=1378.589149798; environment=production}"
+"ChromaDB Health Check","PASS","200","22.2851ms","7","1.0.0"
+"Ollama Health Check","PASS","200","23.5308ms","20","@{version=0.11.5}"
+"Check Available Models","PASS","200","20.5319ms","336","@{models=System.Object[]}"
+"Simple Chat Query","PASS","200","77255.0804ms","1195","@{response=The question ""What did the president say about Michael Jackson?"" does not appear in any of the provided sources, so the answer is that the president did not mention Michael Jackson.
+
+The sources provided are:
+
+1. 28-pl - This source refers to a provision in the contract governing the interpretation of the agreement.
+2. 30-pl - This source refers to a provision in the contract regarding the lack of agency between the parties.
+3. 4-pl - This source refers to a provision in the contract regarding the distribution of intellectual property rights.
+4. 0-pl - This source refers to a speech by the president regarding COVID-19 and the response to Russia's invasion of Ukraine.
+5. 24-pl - This source refers to the sacrifice of two police officers who were killed in the line of duty.
+6. 34-pl - This source refers to the president's speech at the Capitol regarding the unity of Americans and the response to Russia's invasion of Ukraine.
+
+Therefore, the answer to the question ""What did the president say about Michael Jackson?"" is that he did not mention Michael Jackson in any of these sources.; sources=System.Object[]; conversation_id=e9f8048e-22cb-4253-8c6c-0b0eca90bd58}"
+"Business Context Query","PASS","200","115250.1096ms","1780","@{response=Unfortunately, the question you provided does not relate to any specific law or legal concept, and therefore I cannot provide a definitive answer. However, I can offer some general information about invoice processing in the context of business.
+
+Invoice processing refers to the administrative tasks involved in receiving, reviewing, and paying invoices from suppliers or vendors. This process typically includes tasks such as:
+
+1. Invoice receipt: The receiving of invoices from suppliers or vendors through various channels, such as email, mail, or electronic data interchange (EDI).
+2. Invoice review: Verifying the accuracy of the invoice, including the goods or services provided, the price, and any discounts or taxes applied.
+3. Payment processing: Making payments to suppliers or vendors based on the invoices received, either through manual checks or automated payment systems.
+4. Invoice tracking: Maintaining a record of invoices received, paid, and outstanding, as well as monitoring the status of invoice payments.
+5. Invoice auditing: Regularly reviewing invoices to ensure compliance with company policies and procedures, as well as identifying any discrepancies or errors that may require correction.
+6. Invoice reporting: Generating reports on invoice processing activities, such as payment schedules, outstanding invoices, and cost centers.
+7. Invoice automation: Implementing software or systems to automate invoice processing tasks, such as invoice scanning, data entry, and approval workflows.
+
+It is important to note that the specific processes and procedures involved in invoice processing may vary depending on the industry, company size, and other factors.; sources=System.Object[]; conversation_id=04fda367-02d5-4c41-9983-515710019638}"
+"Conversation Continuation","PASS","200","45529.3883ms","667","@{response=The final answer is ""The president did not mention Michael Jackson.""
+
+The sources for this answer are:
+
+* Content: Madam Speaker, Madam Vice President, our First Lady and Second Gentleman. Members of Congress and the Cabinet. Justices of the Supreme Court. My fellow Americans. (0-pl)
+* Content: And we won't stop. (24-pl)
+* Content: More support for patients and families. (34-pl)
+
+These sources do not mention Michael Jackson or provide any information about him, so it can be concluded that the president did not elaborate on him in any of these speeches or statements.; sources=System.Object[]; conversation_id=e9f8048e-22cb-4253-8c6c-0b0eca90bd58}"
+"Start Data Indexing","PASS","200","2661.2055ms","141","@{status=processing; task_id=1c683c13-95f4-433b-8b26-ec24cc7d573d; message=Indexing test_documents data; error=; details=}"
+"Check Indexing Status","PASS","200","2374.1085ms","137","@{status=processing; task_id=1c683c13-95f4-433b-8b26-ec24cc7d573d; message=Task is still processing; error=; details=}"
+"Get Conversation History","PASS","200","14.5258ms","2","[]..."
+"Empty Query Handling","PASS","200","26.7781ms","169","@{response=I'm sorry, but your query appears to be empty. Please provide a question or request.; sources=System.Object[]; conversation_id=feabee5a-b771-47b9-9624-403e9ab64a1d}"

@@ -2,6 +2,7 @@ fastapi>=0.95.2
 uvicorn>=0.18.3
 langchain>=0.0.300
 langchain-community>=0.0.6
+langchain-huggingface>=0.0.3
 ollama>=0.1.7
 python-dotenv
 numpy
@@ -16,10 +17,8 @@ redis
 celery
 prometheus-fastapi-instrumentator
 pydantic[email]
-pydantic-settings
 passlib[bcrypt]
 python-jose[cryptography]
 aiohttp
 tenacity
 httpx
-pytest

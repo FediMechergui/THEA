@@ -1,0 +1,3 @@
+﻿Invoice Number: 12345
+Date: 21/09/2025
+Total: 100.50

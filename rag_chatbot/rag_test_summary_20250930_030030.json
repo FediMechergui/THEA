@@ -1,0 +1,145 @@
+﻿{
+    "timestamp":  "2025-09-30 03:00:30",
+    "failed_tests":  0,
+    "total_tests":  14,
+    "test_results":  [
+                         {
+                             "Test":  "RAG Chatbot Health Check",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "24.3214ms",
+                             "ResponseSize":  44,
+                             "Response":  {
+                                              "status":  "healthy",
+                                              "service":  "rag-chatbot"
+                                          }
+                         },
+                         {
+                             "Test":  "Node.js Backend Health Check",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "26.6668ms",
+                             "ResponseSize":  105,
+                             "Response":  {
+                                              "status":  "OK",
+                                              "timestamp":  "2025-09-30T01:56:31.609Z",
+                                              "uptime":  1378.589149798,
+                                              "environment":  "production"
+                                          }
+                         },
+                         {
+                             "Test":  "ChromaDB Health Check",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "22.2851ms",
+                             "ResponseSize":  7,
+                             "Response":  "1.0.0"
+                         },
+                         {
+                             "Test":  "Ollama Health Check",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "23.5308ms",
+                             "ResponseSize":  20,
+                             "Response":  {
+                                              "version":  "0.11.5"
+                                          }
+                         },
+                         {
+                             "Test":  "Check Available Models",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "20.5319ms",
+                             "ResponseSize":  336,
+                             "Response":  {
+                                              "models":  ""
+                                          }
+                         },
+                         {
+                             "Test":  "Simple Chat Query",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "77255.0804ms",
+                             "ResponseSize":  1195,
+                             "Response":  {
+                                              "response":  "The question \"What did the president say about Michael Jackson?\" does not appear in any of the provided sources, so the answer is that the president did not mention Michael Jackson.\n\nThe sources provided are:\n\n1. 28-pl - This source refers to a provision in the contract governing the interpretation of the agreement.\n2. 30-pl - This source refers to a provision in the contract regarding the lack of agency between the parties.\n3. 4-pl - This source refers to a provision in the contract regarding the distribution of intellectual property rights.\n4. 0-pl - This source refers to a speech by the president regarding COVID-19 and the response to Russia\u0027s invasion of Ukraine.\n5. 24-pl - This source refers to the sacrifice of two police officers who were killed in the line of duty.\n6. 34-pl - This source refers to the president\u0027s speech at the Capitol regarding the unity of Americans and the response to Russia\u0027s invasion of Ukraine.\n\nTherefore, the answer to the question \"What did the president say about Michael Jackson?\" is that he did not mention Michael Jackson in any of these sources.",
+                                              "sources":  "",
+                                              "conversation_id":  "e9f8048e-22cb-4253-8c6c-0b0eca90bd58"
+                                          }
+                         },
+                         {
+                             "Test":  "Business Context Query",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "115250.1096ms",
+                             "ResponseSize":  1780,
+                             "Response":  {
+                                              "response":  "Unfortunately, the question you provided does not relate to any specific law or legal concept, and therefore I cannot provide a definitive answer. However, I can offer some general information about invoice processing in the context of business.\n\nInvoice processing refers to the administrative tasks involved in receiving, reviewing, and paying invoices from suppliers or vendors. This process typically includes tasks such as:\n\n1. Invoice receipt: The receiving of invoices from suppliers or vendors through various channels, such as email, mail, or electronic data interchange (EDI).\n2. Invoice review: Verifying the accuracy of the invoice, including the goods or services provided, the price, and any discounts or taxes applied.\n3. Payment processing: Making payments to suppliers or vendors based on the invoices received, either through manual checks or automated payment systems.\n4. Invoice tracking: Maintaining a record of invoices received, paid, and outstanding, as well as monitoring the status of invoice payments.\n5. Invoice auditing: Regularly reviewing invoices to ensure compliance with company policies and procedures, as well as identifying any discrepancies or errors that may require correction.\n6. Invoice reporting: Generating reports on invoice processing activities, such as payment schedules, outstanding invoices, and cost centers.\n7. Invoice automation: Implementing software or systems to automate invoice processing tasks, such as invoice scanning, data entry, and approval workflows.\n\nIt is important to note that the specific processes and procedures involved in invoice processing may vary depending on the industry, company size, and other factors.",
+                                              "sources":  "",
+                                              "conversation_id":  "04fda367-02d5-4c41-9983-515710019638"
+                                          }
+                         },
+                         {
+                             "Test":  "Conversation Continuation",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "45529.3883ms",
+                             "ResponseSize":  667,
+                             "Response":  {
+                                              "response":  "The final answer is \"The president did not mention Michael Jackson.\"\n\nThe sources for this answer are:\n\n* Content: Madam Speaker, Madam Vice President, our First Lady and Second Gentleman. Members of Congress and the Cabinet. Justices of the Supreme Court. My fellow Americans. (0-pl)\n* Content: And we won\u0027t stop. (24-pl)\n* Content: More support for patients and families. (34-pl)\n\nThese sources do not mention Michael Jackson or provide any information about him, so it can be concluded that the president did not elaborate on him in any of these speeches or statements.",
+                                              "sources":  "",
+                                              "conversation_id":  "e9f8048e-22cb-4253-8c6c-0b0eca90bd58"
+                                          }
+                         },
+                         {
+                             "Test":  "Start Data Indexing",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "2661.2055ms",
+                             "ResponseSize":  141,
+                             "Response":  {
+                                              "status":  "processing",
+                                              "task_id":  "1c683c13-95f4-433b-8b26-ec24cc7d573d",
+                                              "message":  "Indexing test_documents data",
+                                              "error":  null,
+                                              "details":  null
+                                          }
+                         },
+                         {
+                             "Test":  "Check Indexing Status",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "2374.1085ms",
+                             "ResponseSize":  137,
+                             "Response":  {
+                                              "status":  "processing",
+                                              "task_id":  "1c683c13-95f4-433b-8b26-ec24cc7d573d",
+                                              "message":  "Task is still processing",
+                                              "error":  null,
+                                              "details":  null
+                                          }
+                         },
+                         {
+                             "Test":  "Get Conversation History",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "14.5258ms",
+                             "ResponseSize":  2,
+                             "Response":  "[]..."
+                         },
+                         {
+                             "Test":  "Empty Query Handling",
+                             "Status":  "PASS",
+                             "StatusCode":  200,
+                             "Duration":  "26.7781ms",
+                             "ResponseSize":  169,
+                             "Response":  {
+                                              "response":  "I\u0027m sorry, but your query appears to be empty. Please provide a question or request.",
+                                              "sources":  "",
+                                              "conversation_id":  "feabee5a-b771-47b9-9624-403e9ab64a1d"
+                                          }
+                         }
+                     ],
+    "passed_tests":  14,
+    "success_rate":  100
+}

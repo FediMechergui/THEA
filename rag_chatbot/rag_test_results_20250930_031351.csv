@@ -1,0 +1,25 @@
+"Test","Status","StatusCode","Duration","ResponseSize","Response"
+"RAG Chatbot Health Check","PASS","200","173.876ms","44","@{status=healthy; service=rag-chatbot}"
+"Node.js Backend Health Check","PASS","200","33.397ms","105","@{status=OK; timestamp=2025-09-30T02:12:28.753Z; uptime=2256.581464506; environment=production}"
+"ChromaDB Health Check","PASS","200","49.4024ms","7","1.0.0"
+"Ollama Health Check","PASS","200","36.4695ms","20","@{version=0.11.5}"
+"Check Available Models","PASS","200","30.689ms","336","@{models=System.Object[]}"
+"List ChromaDB Collections","PASS","404","2.0021ms","53","The remote server returned an error: (404) Not Found."
+"Simple Chat Query","PASS","200","13946.8017ms","281","@{response=The question ""What did the president say about Michael Jackson?"" does not appear in any of the provided documents or sources, so the answer is that the president did not mention Michael Jackson.; sources=System.Object[]; conversation_id=83305633-6bda-4b2c-af2e-507b94585c24}"
+"Business Context Query","PASS","200","39215.5332ms","571","@{response=The final answer to the question ""What did the president say about Michael Jackson?"" is that the president did not mention Michael Jackson.
+
+The sources for this answer are:
+
+* 0-pl: The president's speech does not mention Michael Jackson.
+* 24-pl: The president's speech does not mention Michael Jackson.
+* 34-pl: The president's speech does not mention Michael Jackson.
+
+Therefore, the answer to the question is that the president did not say anything about Michael Jackson.; sources=System.Object[]; conversation_id=57ca3eee-61ac-4051-b1dc-be879b751d4d}"
+"Conversation Continuation","PASS","200","28197.9406ms","386","@{response=The question ""What did the president say about Michael Jackson?"" is based on a false premise, as there is no information in the provided text to suggest that the president made any mention of Michael Jackson. Therefore, the answer is ""The president did not say anything about Michael Jackson.""
+
+; sources=System.Object[]; conversation_id=83305633-6bda-4b2c-af2e-507b94585c24}"
+"Start Data Indexing","PASS","200","2629.1591ms","141","@{status=processing; task_id=0e4b47ea-0d89-4735-b1b5-7f1cc2ecdc6a; message=Indexing test_documents data; error=; details=}"
+"Check Indexing Status","PASS","200","2713.1033ms","137","@{status=processing; task_id=0e4b47ea-0d89-4735-b1b5-7f1cc2ecdc6a; message=Task is still processing; error=; details=}"
+"Get Conversation History","PASS","200","27.58ms","2","[]..."
+"Invalid Endpoint (404)","PASS","404","15.8679ms","53","The remote server returned an error: (404) Not Found."
+"Empty Query Handling","PASS","200","26.7292ms","169","@{response=I'm sorry, but your query appears to be empty. Please provide a question or request.; sources=System.Object[]; conversation_id=9d25234a-1abe-4de0-8af3-1c6fb1a23a7e}"

@@ -1,7 +1,10 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException, BackgroundTasks
-from ..services.ocr_service import process_invoice
+from ..worker import process_invoice
 from ..models.invoice import InvoiceResponse
 import logging
+import os
+import uuid
+from pathlib import Path
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -22,8 +25,21 @@ async def upload_invoice(
                 detail="Invalid file type. Only PDF, JPEG, and PNG are supported."
             )
         
-        # Process invoice asynchronously
-        task = process_invoice.delay(await file.read())
+        # Save file to disk for Celery processing
+        uploads_dir = Path("/app/uploads")
+        uploads_dir.mkdir(exist_ok=True)
+        
+        file_extension = Path(file.filename).suffix or ".tmp"
+        unique_filename = f"{uuid.uuid4()}{file_extension}"
+        file_path = uploads_dir / unique_filename
+        
+        # Save uploaded file
+        content = await file.read()
+        with open(file_path, "wb") as f:
+            f.write(content)
+        
+        # Process invoice asynchronously with file path
+        task = process_invoice.delay(str(file_path))
         
         return {
             "status": "processing",

@@ -37,7 +37,7 @@ services:
     build:
       context: ./fastapi_ocr
       dockerfile: Dockerfile
-    command: celery -A app.services.celery_app worker --loglevel=info
+    command: celery -A app.worker.celery worker --loglevel=debug
     env_file:
       - ./fastapi_ocr/.env.docker
     volumes:
@@ -72,7 +72,7 @@ services:
     build:
       context: ./rag_chatbot
       dockerfile: Dockerfile
-    command: celery -A app.services.celery_app worker --loglevel=info
+    command: celery -A app.worker.celery worker --loglevel=info
     env_file:
       - ./rag_chatbot/.env.docker
     volumes:

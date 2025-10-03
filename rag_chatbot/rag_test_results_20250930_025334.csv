@@ -1,0 +1,33 @@
+"Test","Status","StatusCode","Duration","ResponseSize","Response"
+"RAG Chatbot Health Check","PASS","200","23.3939ms","44","@{status=healthy; service=rag-chatbot}"
+"Node.js Backend Health Check","PASS","200","22.5067ms","105","@{status=OK; timestamp=2025-09-30T01:51:53.994Z; uptime=1122.801594371; environment=production}"
+"ChromaDB Health Check","PASS","200","25.2874ms","7","1.0.0"
+"Ollama Health Check","PASS","200","20.9279ms","20","@{version=0.11.5}"
+"Check Available Models","PASS","200","20.1262ms","336","@{models=System.Object[]}"
+"List ChromaDB Collections","ERROR","N/A","N/A","0","The remote server returned an error: (404) Not Found."
+"Simple Chat Query","PASS","200","20973.1551ms","398","@{response=The president did not mention Michael Jackson in any of the provided texts. Therefore, the answer to the question ""What did the president say about Michael Jackson?"" is that he did not say anything about him.
+
+Here are the sources for the final answer:
+
+* None of the provided texts mention Michael Jackson.; sources=System.Object[]; conversation_id=f2f047c3-47a0-40de-a19f-3c62edc54bb7}"
+"Business Context Query","PASS","200","52349.5953ms","893","@{response=I'm just an AI, I don't have access to external information or the ability to browse the internet, so I cannot provide information about invoice processing. However, I can suggest some general resources that may be helpful for you:
+
+* Accounting Principles: This website provides a comprehensive guide to accounting principles and practices, including invoicing and accounts receivable management.
+* Investopedia: This website offers a variety of resources on financial topics, including invoice processing and accounts payable management.
+* Small Business Trends: This website provides news, advice, and resources for small business owners, including articles on invoice processing and accounts receivable management.
+
+I hope these suggestions are helpful! Let me know if you have any other questions.; sources=System.Object[]; conversation_id=a23913a4-7e1e-457c-bc97-5d46d9bc16fc}"
+"Conversation Continuation","PASS","200","28229.3001ms","405","@{response=The final answer is no, the president did not mention Michael Jackson in the provided text.
+
+The sources for this answer are:
+
+* 0-pl (no mention of Michael Jackson)
+* 24-pl (no mention of Michael Jackson)
+* 34-pl (no mention of Michael Jackson)
+
+I hope this helps! Let me know if you have any further questions.; sources=System.Object[]; conversation_id=f2f047c3-47a0-40de-a19f-3c62edc54bb7}"
+"Start Data Indexing","PASS","200","2575.5618ms","141","@{status=processing; task_id=80c130ca-bc70-4e40-a8c2-a8da990d54eb; message=Indexing test_documents data; error=; details=}"
+"Check Indexing Status","PASS","200","2682.408ms","137","@{status=processing; task_id=80c130ca-bc70-4e40-a8c2-a8da990d54eb; message=Task is still processing; error=; details=}"
+"Get Conversation History","PASS","200","17.9492ms","2","[]..."
+"Invalid Endpoint (404)","ERROR","N/A","N/A","0","The remote server returned an error: (404) Not Found."
+"Empty Query Handling","PASS","200","14.2449ms","169","@{response=I'm sorry, but your query appears to be empty. Please provide a question or request.; sources=System.Object[]; conversation_id=e9df3c62-ffcd-4279-a78b-c50de62ca198}"

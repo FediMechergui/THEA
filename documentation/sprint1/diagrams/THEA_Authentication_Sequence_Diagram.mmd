@@ -1,0 +1,92 @@
+sequenceDiagram
+    participant Client
+    participant Express
+    participant AuthRoutes
+    participant AuthMiddleware
+    participant Database
+    participant JWT
+    participant Logger
+
+    %% User Registration Flow
+    rect rgb(240, 248, 255)
+        Note over Client, Logger: User Registration Flow
+        Client->>Express: POST /api/auth/register
+        Express->>AuthRoutes: route request
+        AuthRoutes->>AuthRoutes: validate input data
+        AuthRoutes->>Database: check existing user
+        Database-->>AuthRoutes: user exists check
+        alt User exists
+            AuthRoutes-->>Client: 409 Conflict
+        else User doesn't exist
+            AuthRoutes->>AuthRoutes: hash password
+            AuthRoutes->>Database: create user
+            Database-->>AuthRoutes: user created
+            AuthRoutes->>Logger: log registration
+            AuthRoutes-->>Client: 201 Created + user data
+        end
+    end
+
+    %% User Login Flow
+    rect rgb(255, 248, 240)
+        Note over Client, Logger: User Login Flow
+        Client->>Express: POST /api/auth/login
+        Express->>AuthRoutes: route request
+        AuthRoutes->>AuthRoutes: validate credentials
+        AuthRoutes->>Database: find user by email
+        Database-->>AuthRoutes: user data
+        alt Invalid credentials
+            AuthRoutes-->>Client: 401 Unauthorized
+        else Valid credentials
+            AuthRoutes->>AuthRoutes: verify password hash
+            AuthRoutes->>JWT: generate access token
+            JWT-->>AuthRoutes: access token
+            AuthRoutes->>JWT: generate refresh token
+            JWT-->>AuthRoutes: refresh token
+            AuthRoutes->>Database: store refresh token
+            AuthRoutes->>Logger: log login event
+            AuthRoutes-->>Client: 200 OK + tokens
+        end
+    end
+
+    %% Protected Route Access Flow
+    rect rgb(248, 255, 240)
+        Note over Client, Logger: Protected Route Access Flow
+        Client->>Express: GET /api/invoices (with Authorization header)
+        Express->>AuthMiddleware: authenticateToken middleware
+        AuthMiddleware->>AuthMiddleware: extract JWT token
+        AuthMiddleware->>JWT: verify token
+        JWT-->>AuthMiddleware: decoded payload
+        alt Invalid token
+            AuthMiddleware-->>Client: 401 Unauthorized
+        else Valid token
+            AuthMiddleware->>Database: find user by ID
+            Database-->>AuthMiddleware: user data + enterprise
+            alt User not found
+                AuthMiddleware-->>Client: 401 Unauthorized
+            else User found
+                AuthMiddleware->>Express: add user to req object
+                Express->>InvoiceRoutes: process request
+                InvoiceRoutes->>Database: query invoices
+                Database-->>InvoiceRoutes: invoice data
+                InvoiceRoutes-->>Client: 200 OK + invoices
+            end
+        end
+    end
+
+    %% Token Refresh Flow
+    rect rgb(255, 240, 248)
+        Note over Client, Logger: Token Refresh Flow
+        Client->>Express: POST /api/auth/refresh
+        Express->>AuthRoutes: route request
+        AuthRoutes->>AuthRoutes: extract refresh token
+        AuthRoutes->>Database: validate refresh token
+        Database-->>AuthRoutes: token valid + user data
+        alt Invalid refresh token
+            AuthRoutes-->>Client: 401 Unauthorized
+        else Valid refresh token
+            AuthRoutes->>JWT: generate new access token
+            JWT-->>AuthRoutes: new access token
+            AuthRoutes->>Logger: log token refresh
+            AuthRoutes-->>Client: 200 OK + new token
+        end
+    end
