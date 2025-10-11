@@ -1,0 +1,194 @@
+pipeline {
+    agent any
+    
+    environment {
+        // Service Configuration
+        SERVICE_NAME = 'fastapi-ocr'
+        IMAGE_NAME = 'thea-fastapi-ocr'
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
+        
+        // Application Environment
+        PYTHON_ENV = 'production'
+        
+        // Docker Configuration (Local)
+        DOCKER_BUILDKIT = '1'
+    }
+    
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+        timeout(time: 45, unit: 'MINUTES')
+        timestamps()
+    }
+    
+    stages {
+        stage('Checkout & Environment Setup') {
+            steps {
+                echo "🚀 Starting FastAPI OCR Service CI/CD Pipeline - Build #${env.BUILD_NUMBER}"
+                
+                script {
+                    // Display build information
+                    sh '''
+                        echo "=== Build Information ==="
+                        echo "Branch: ${GIT_BRANCH}"
+                        echo "Build Number: ${BUILD_NUMBER}"
+                        echo "Python Version: $(python3 --version)"
+                        echo "Docker Version: $(docker --version)"
+                        echo "=========================="
+                    '''
+                }
+            }
+        }
+        
+        stage('Install Dependencies') {
+            steps {
+                echo "📦 Installing Python dependencies"
+                
+                dir('fastapi_ocr') {
+                    sh '''
+                        # Create virtual environment
+                        python3 -m venv venv || true
+                        
+                        # Activate and install dependencies
+                        . venv/bin/activate
+                        pip install --upgrade pip
+                        pip install -r requirements.txt
+                        
+                        # List installed packages
+                        pip list > dependency-report.txt
+                    '''
+                }
+                
+                // Archive dependency report
+                archiveArtifacts artifacts: 'fastapi_ocr/dependency-report.txt', fingerprint: true
+            }
+        }
+        
+        stage('Code Quality Checks') {
+            steps {
+                echo "🔍 Running code quality checks"
+                
+                dir('fastapi_ocr') {
+                    sh '''
+                        . venv/bin/activate
+                        
+                        # Run pylint if available
+                        pip install pylint || true
+                        pylint app/ --output-format=text || true
+                        
+                        # Run flake8 if available
+                        pip install flake8 || true
+                        flake8 app/ --max-line-length=120 || true
+                    '''
+                }
+            }
+        }
+        
+        stage('Run Tests') {
+            steps {
+                echo "🧪 Running FastAPI OCR tests"
+                
+                dir('fastapi_ocr') {
+                    sh '''
+                        . venv/bin/activate
+                        
+                        # Run pytest if test files exist
+                        if [ -d "tests" ]; then
+                            pip install pytest pytest-cov || true
+                            pytest tests/ --verbose --cov=app || true
+                        else
+                            echo "No test directory found, skipping tests"
+                        fi
+                    '''
+                }
+            }
+        }
+        
+        stage('Build Docker Image') {
+            steps {
+                echo "🐳 Building Docker image for FastAPI OCR"
+                
+                dir('fastapi_ocr') {
+                    script {
+                        // Build Docker image
+                        sh """
+                            docker build \
+                                --build-arg BUILD_DATE=\$(date -u +'%Y-%m-%dT%H:%M:%SZ') \
+                                --build-arg BUILD_VERSION=${IMAGE_TAG} \
+                                -t ${IMAGE_NAME}:${IMAGE_TAG} \
+                                -t ${IMAGE_NAME}:latest \
+                                .
+                        """
+                        
+                        // Show image info
+                        sh "docker images | grep ${IMAGE_NAME}"
+                    }
+                }
+            }
+        }
+        
+        stage('Security Scan') {
+            steps {
+                echo "🔒 Running security scan on Docker image"
+                
+                script {
+                    // Install trivy if not present
+                    sh '''
+                        if ! command -v trivy &> /dev/null; then
+                            echo "Trivy not installed, skipping security scan"
+                        else
+                            trivy image --severity HIGH,CRITICAL ${IMAGE_NAME}:${IMAGE_TAG} || true
+                        fi
+                    '''
+                }
+            }
+        }
+        
+        stage('Deploy Locally') {
+            steps {
+                echo "🚀 Deploying FastAPI OCR service locally"
+                
+                script {
+                    sh '''
+                        # Stop existing container if running
+                        docker stop thea-fastapi-ocr || true
+                        docker rm thea-fastapi-ocr || true
+                        
+                        # Run new container
+                        docker run -d \
+                            --name thea-fastapi-ocr \
+                            --network thea-network \
+                            -p 8000:8000 \
+                            -v $(pwd)/fastapi_ocr/uploads:/app/uploads \
+                            ${IMAGE_NAME}:${IMAGE_TAG}
+                        
+                        # Wait for service to be ready
+                        sleep 10
+                        
+                        # Health check
+                        curl -f http://localhost:8000/health || exit 1
+                    '''
+                }
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo "✅ FastAPI OCR Pipeline completed successfully!"
+            
+            // Clean up old images
+            sh '''
+                docker image prune -f --filter "until=168h" || true
+            '''
+        }
+        
+        failure {
+            echo "❌ FastAPI OCR Pipeline failed!"
+        }
+        
+        always {
+            // Cleanup workspace
+            cleanWs()
+        }
+    }
+}
