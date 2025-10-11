@@ -22,6 +22,20 @@ pipeline {
             }
         }
         
+        stage('Setup Environment') {
+            steps {
+                dir("${SERVICE_DIR}") {
+                    echo "Setting up environment for ${SERVICE_NAME}..."
+                    sh '''
+                        if [ ! -f .env.docker ]; then
+                            echo "Creating .env.docker from .env.example..."
+                            cp .env.example .env.docker || echo "Warning: .env.example not found"
+                        fi
+                    '''
+                }
+            }
+        }
+        
         stage('Stop Existing Containers') {
             steps {
                 dir("${SERVICE_DIR}") {
