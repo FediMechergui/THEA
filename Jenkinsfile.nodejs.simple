@@ -1,0 +1,75 @@
+pipeline {
+    agent any
+    
+    environment {
+        SERVICE_NAME = 'nodejs-backend'
+        SERVICE_DIR = 'nodejs_backend'
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                echo "Using workspace at: ${WORKSPACE}"
+                sh 'ls -la'
+            }
+        }
+        
+        stage('Environment Check') {
+            steps {
+                echo "Checking Docker and Docker Compose..."
+                sh 'docker --version'
+                sh 'docker-compose --version || docker compose version'
+            }
+        }
+        
+        stage('Stop Existing Containers') {
+            steps {
+                dir("${SERVICE_DIR}") {
+                    echo "Stopping existing ${SERVICE_NAME} containers..."
+                    sh 'docker-compose down || true'
+                }
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                dir("${SERVICE_DIR}") {
+                    echo "Building ${SERVICE_NAME} with docker-compose..."
+                    sh 'docker-compose build'
+                }
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                dir("${SERVICE_DIR}") {
+                    echo "Starting ${SERVICE_NAME} containers..."
+                    sh 'docker-compose up -d'
+                }
+            }
+        }
+        
+        stage('Verify') {
+            steps {
+                dir("${SERVICE_DIR}") {
+                    echo "Verifying ${SERVICE_NAME} is running..."
+                    sh 'docker-compose ps'
+                    sh 'sleep 10'
+                    sh 'docker-compose logs --tail=50'
+                }
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo "✅ ${SERVICE_NAME} deployment successful!"
+        }
+        failure {
+            echo "❌ ${SERVICE_NAME} deployment failed!"
+            dir("${SERVICE_DIR}") {
+                sh 'docker-compose logs --tail=100 || true'
+            }
+        }
+    }
+}
