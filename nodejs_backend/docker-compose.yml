@@ -48,9 +48,8 @@ services:
       - LOG_LEVEL=info
       
     volumes:
-      - ./logs:/app/logs
-      - ./uploads:/app/uploads
-      - thea_uploads:/app/uploads/temp
+      - thea_logs:/app/logs
+      - thea_uploads:/app/uploads
     depends_on:
       mysql:
         condition: service_healthy
@@ -167,6 +166,8 @@ volumes:
   minio_data:
     driver: local
   rabbitmq_data:
+    driver: local
+  thea_logs:
     driver: local
   thea_uploads:
     driver: local
