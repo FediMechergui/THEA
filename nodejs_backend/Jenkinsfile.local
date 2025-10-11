@@ -1,0 +1,213 @@
+pipeline {
+    agent any
+    
+    environment {
+        // Service Configuration
+        SERVICE_NAME = 'nodejs-backend'
+        IMAGE_NAME = 'thea-nodejs-backend'
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
+        
+        // Application Environment
+        NODE_ENV = 'production'
+        
+        // Docker Configuration (Local)
+        DOCKER_BUILDKIT = '1'
+    }
+    
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+        timeout(time: 45, unit: 'MINUTES')
+        timestamps()
+    }
+    
+    stages {
+        stage('Checkout & Environment Setup') {
+            steps {
+                echo "🚀 Starting Node.js Backend CI/CD Pipeline - Build #${env.BUILD_NUMBER}"
+                
+                script {
+                    // Display build information
+                    sh '''
+                        echo "=== Build Information ==="
+                        echo "Branch: ${GIT_BRANCH}"
+                        echo "Build Number: ${BUILD_NUMBER}"
+                        echo "Node.js Version: $(node --version)"
+                        echo "NPM Version: $(npm --version)"
+                        echo "Docker Version: $(docker --version)"
+                        echo "=========================="
+                    '''
+                }
+            }
+        }
+        
+        stage('Install Dependencies') {
+            steps {
+                echo "📦 Installing Node.js dependencies"
+                
+                dir('nodejs_backend') {
+                    sh '''
+                        # Install dependencies
+                        npm ci --only=production
+                        
+                        # Generate dependency tree
+                        npm list --depth=0 > dependency-report.txt || true
+                    '''
+                }
+                
+                // Archive dependency report
+                archiveArtifacts artifacts: 'nodejs_backend/dependency-report.txt', fingerprint: true
+            }
+        }
+        
+        stage('Code Quality Checks') {
+            steps {
+                echo "🔍 Running ESLint analysis"
+                
+                dir('nodejs_backend') {
+                    sh '''
+                        # Install dev dependencies for linting
+                        npm install --no-save eslint
+                        
+                        # Run ESLint
+                        npx eslint src/ --format stylish || true
+                        npx eslint src/ --format junit --output-file eslint-report.xml || true
+                    '''
+                    
+                    // Publish ESLint results
+                    junit allowEmptyResults: true, testResults: 'nodejs_backend/eslint-report.xml'
+                }
+            }
+        }
+        
+        stage('Run Tests') {
+            steps {
+                echo "🧪 Running Jest tests"
+                
+                dir('nodejs_backend') {
+                    sh '''
+                        # Install test dependencies
+                        npm install --no-save jest supertest
+                        
+                        # Run tests with coverage
+                        npm test -- --ci --coverage --reporters=default --reporters=jest-junit || true
+                    '''
+                    
+                    // Publish test results
+                    junit allowEmptyResults: true, testResults: 'nodejs_backend/junit.xml'
+                }
+            }
+        }
+        
+        stage('Build Docker Image') {
+            steps {
+                echo "🐳 Building Docker image for Node.js Backend"
+                
+                dir('nodejs_backend') {
+                    script {
+                        // Build Docker image
+                        sh """
+                            docker build \
+                                --build-arg BUILD_DATE=\$(date -u +'%Y-%m-%dT%H:%M:%SZ') \
+                                --build-arg BUILD_VERSION=${IMAGE_TAG} \
+                                -t ${IMAGE_NAME}:${IMAGE_TAG} \
+                                -t ${IMAGE_NAME}:latest \
+                                .
+                        """
+                        
+                        // Show image info
+                        sh "docker images | grep ${IMAGE_NAME}"
+                    }
+                }
+            }
+        }
+        
+        stage('Security Scan') {
+            steps {
+                echo "🔒 Running security scan on Docker image"
+                
+                script {
+                    sh '''
+                        # NPM audit
+                        cd nodejs_backend
+                        npm audit --audit-level=high || true
+                        
+                        # Trivy scan if available
+                        if command -v trivy &> /dev/null; then
+                            trivy image --severity HIGH,CRITICAL ${IMAGE_NAME}:${IMAGE_TAG} || true
+                        else
+                            echo "Trivy not installed, skipping container scan"
+                        fi
+                    '''
+                }
+            }
+        }
+        
+        stage('Database Migration Check') {
+            steps {
+                echo "🗄️  Checking database migrations"
+                
+                dir('nodejs_backend') {
+                    sh '''
+                        # Check if migrations are up to date
+                        if [ -d "prisma/migrations" ]; then
+                            echo "Prisma migrations found"
+                            npx prisma generate || true
+                            echo "⚠️  Remember to run 'npx prisma migrate deploy' in production"
+                        fi
+                    '''
+                }
+            }
+        }
+        
+        stage('Deploy Locally') {
+            steps {
+                echo "🚀 Deploying Node.js Backend service locally"
+                
+                script {
+                    sh '''
+                        # Stop existing container if running
+                        docker stop thea-nodejs-backend || true
+                        docker rm thea-nodejs-backend || true
+                        
+                        # Run new container
+                        docker run -d \
+                            --name thea-nodejs-backend \
+                            --network thea-network \
+                            -p 3000:3000 \
+                            --env-file nodejs_backend/.env.docker \
+                            ${IMAGE_NAME}:${IMAGE_TAG}
+                        
+                        # Wait for service to be ready
+                        echo "Waiting for Node.js Backend to be ready..."
+                        sleep 15
+                        
+                        # Health check
+                        curl -f http://localhost:3000/health || exit 1
+                        
+                        echo "Node.js Backend deployed successfully!"
+                    '''
+                }
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo "✅ Node.js Backend Pipeline completed successfully!"
+            
+            // Clean up old images
+            sh '''
+                docker image prune -f --filter "until=168h" || true
+            '''
+        }
+        
+        failure {
+            echo "❌ Node.js Backend Pipeline failed!"
+        }
+        
+        always {
+            // Cleanup workspace
+            cleanWs()
+        }
+    }
+}

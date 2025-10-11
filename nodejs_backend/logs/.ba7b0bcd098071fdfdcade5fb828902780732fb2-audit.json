@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 30
+    },
+    "auditLog": "logs/.ba7b0bcd098071fdfdcade5fb828902780732fb2-audit.json",
+    "files": [
+        {
+            "date": 1760207520554,
+            "name": "logs/thea-backend-error-2025-10-11.log",
+            "hash": "de6a5e332715fb9fb59cf9e9231b8246ff0f239e1eb409cf91a73704bd3a009d"
+        }
+    ],
+    "hashType": "sha256"
+}

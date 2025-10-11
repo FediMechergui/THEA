@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "logs/.524182a0099157592f340bb9468d2222a9521401-audit.json",
+    "files": [
+        {
+            "date": 1760207520551,
+            "name": "logs/thea-backend-2025-10-11.log",
+            "hash": "d1cbfb736ce3d004b06a48b960ac44761844ba1bd99b714830f72c4140ba51ce"
+        }
+    ],
+    "hashType": "sha256"
+}

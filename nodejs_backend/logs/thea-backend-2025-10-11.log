@@ -1,0 +1,109 @@
+2025-10-11 18:32:01 [INFO]: 🚀 Initializing THEA services... {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:01 [INFO]: Prisma Info: Starting a mysql pool with 7 connections. {"service":"thea-backend","environment":"production","target":"quaint::pooled"}
+2025-10-11 18:32:01 [INFO]: Prisma Info: Started query engine http server on http://127.0.0.1:34239 {"service":"thea-backend","environment":"production","target":"query_engine::server"}
+2025-10-11 18:32:01 [INFO]: ✅ Database connection established successfully {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:01 [INFO]: ✅ Database query test successful {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:01 [INFO]: ✅ Database initialization completed {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:01 [INFO]: ✅ Database service initialized {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:01 [INFO]: 🔗 Redis client connected {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:01 [INFO]: ✅ Redis client ready {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:01 [INFO]: ✅ Redis connection test successful {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:01 [INFO]: ✅ Redis service initialized {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:01 [INFO]: ✅ MinIO connection established successfully {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:01 [INFO]: ✅ Created MinIO bucket: thea-invoices {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:02 [INFO]: ✅ Set bucket policy for thea-invoices {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:02 [INFO]: ✅ Created MinIO bucket: thea-documents {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:02 [INFO]: ✅ Created MinIO bucket: thea-templates {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:02 [INFO]: ✅ Created MinIO bucket: thea-backups {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:02 [INFO]: ✅ MinIO buckets initialized {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:02 [INFO]: ✅ MinIO service initialized {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:02 [INFO]: 🔗 RabbitMQ connection established {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:02 [INFO]: ✅ RabbitMQ channel created {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:02 [INFO]: ✅ RabbitMQ QoS set to 5 {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:02 [INFO]: ✅ Queue ensured: ocr_queue {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:02 [INFO]: ✅ Queue ensured: minio_file_rename {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:02 [INFO]: ✅ Queue ensured: invoice_verification {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:02 [INFO]: ✅ Queue ensured: audit_logging {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:02 [INFO]: ✅ Queue ensured: email_notifications {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:02 [INFO]: ✅ RabbitMQ queues initialized {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:02 [INFO]: ✅ RabbitMQ service initialized {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:02 [INFO]: 🎉 All services initialized successfully! {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:02 [INFO]: 🚀 THEA Backend Server running on port 3000 {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:02 [INFO]: 📊 Environment: production {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:02 [INFO]: 🔗 Health check: http://localhost:3000/health {"service":"thea-backend","environment":"production"}
+2025-10-11 18:32:05 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"b54c17af-d017-446e-89fd-89a1a711c7c1","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:32:05 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"b54c17af-d017-446e-89fd-89a1a711c7c1","method":"GET","url":"/health","statusCode":200,"duration":"5ms"}
+2025-10-11 18:32:35 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"3c1bc95e-ee9a-4d4b-9fc4-faaa84973532","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:32:35 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"3c1bc95e-ee9a-4d4b-9fc4-faaa84973532","method":"GET","url":"/health","statusCode":200,"duration":"1ms"}
+2025-10-11 18:33:05 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"7b4ec220-fe02-4490-b395-bf233184085c","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:33:05 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"7b4ec220-fe02-4490-b395-bf233184085c","method":"GET","url":"/health","statusCode":200,"duration":"1ms"}
+2025-10-11 18:33:35 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"c879021b-2223-4a8b-885f-d5239386e718","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:33:35 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"c879021b-2223-4a8b-885f-d5239386e718","method":"GET","url":"/health","statusCode":200,"duration":"1ms"}
+2025-10-11 18:33:59 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"da556aa2-21ad-4375-ab9f-ac1a45b976da","method":"GET","url":"/health","ip":"::1","userAgent":"curl/8.14.1"}
+2025-10-11 18:33:59 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"da556aa2-21ad-4375-ab9f-ac1a45b976da","method":"GET","url":"/health","statusCode":200,"duration":"2ms"}
+2025-10-11 18:34:06 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"48b19d8a-156e-484f-9ce4-c1430ea785d4","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:34:06 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"48b19d8a-156e-484f-9ce4-c1430ea785d4","method":"GET","url":"/health","statusCode":200,"duration":"1ms"}
+2025-10-11 18:34:36 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"499934c8-2a74-430c-b3f8-006113f6ff4b","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:34:36 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"499934c8-2a74-430c-b3f8-006113f6ff4b","method":"GET","url":"/health","statusCode":200,"duration":"0ms"}
+2025-10-11 18:35:06 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"c430089c-c2d4-4825-ad6a-c9d5d84ae6cf","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:35:06 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"c430089c-c2d4-4825-ad6a-c9d5d84ae6cf","method":"GET","url":"/health","statusCode":200,"duration":"1ms"}
+2025-10-11 18:35:36 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"5dcf01dc-d589-4944-9d47-5a7f205819cc","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:35:36 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"5dcf01dc-d589-4944-9d47-5a7f205819cc","method":"GET","url":"/health","statusCode":200,"duration":"2ms"}
+2025-10-11 18:36:06 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"591bd5a0-4801-47ec-b65b-10fa12b0e883","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:36:06 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"591bd5a0-4801-47ec-b65b-10fa12b0e883","method":"GET","url":"/health","statusCode":200,"duration":"0ms"}
+2025-10-11 18:36:36 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"b70a1a8d-5937-469f-9577-bfbbb85a5a1b","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:36:36 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"b70a1a8d-5937-469f-9577-bfbbb85a5a1b","method":"GET","url":"/health","statusCode":200,"duration":"0ms"}
+2025-10-11 18:37:02 [ERROR]: ❌ Redis client error: Socket closed unexpectedly {"service":"thea-backend","environment":"production"}
+Error: Socket closed unexpectedly
+    at Socket.<anonymous> (/app/node_modules/@redis/client/dist/lib/client/socket.js:194:118)
+    at Object.onceWrapper (node:events:632:26)
+    at Socket.emit (node:events:517:28)
+    at TCP.<anonymous> (node:net:350:12)
+2025-10-11 18:37:02 [INFO]: 🔄 Redis client reconnecting... {"service":"thea-backend","environment":"production"}
+2025-10-11 18:37:02 [INFO]: 🔗 Redis client connected {"service":"thea-backend","environment":"production"}
+2025-10-11 18:37:02 [INFO]: ✅ Redis client ready {"service":"thea-backend","environment":"production"}
+2025-10-11 18:37:07 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"c34a7327-1e15-4f8b-998f-68e328ae8dd3","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:37:07 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"c34a7327-1e15-4f8b-998f-68e328ae8dd3","method":"GET","url":"/health","statusCode":200,"duration":"1ms"}
+2025-10-11 18:37:37 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"236f625e-ad2e-428c-b76f-cc3f797e5464","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:37:37 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"236f625e-ad2e-428c-b76f-cc3f797e5464","method":"GET","url":"/health","statusCode":200,"duration":"1ms"}
+2025-10-11 18:38:07 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"bb4c6186-006f-45c4-8efc-cfe3fbf20ef7","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:38:07 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"bb4c6186-006f-45c4-8efc-cfe3fbf20ef7","method":"GET","url":"/health","statusCode":200,"duration":"1ms"}
+2025-10-11 18:38:37 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"95bc9ce0-f954-4965-88c1-691907e896c3","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:38:37 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"95bc9ce0-f954-4965-88c1-691907e896c3","method":"GET","url":"/health","statusCode":200,"duration":"1ms"}
+2025-10-11 18:39:07 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"90aa7ef2-89ab-4e44-9575-7b73e7f89b39","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:39:07 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"90aa7ef2-89ab-4e44-9575-7b73e7f89b39","method":"GET","url":"/health","statusCode":200,"duration":"0ms"}
+2025-10-11 18:39:37 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"18c8fea2-8664-4aa3-816e-82f413e140f4","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:39:37 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"18c8fea2-8664-4aa3-816e-82f413e140f4","method":"GET","url":"/health","statusCode":200,"duration":"2ms"}
+2025-10-11 18:40:07 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"d15bee12-6045-48ab-9a72-8dc83bd8bb65","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:40:07 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"d15bee12-6045-48ab-9a72-8dc83bd8bb65","method":"GET","url":"/health","statusCode":200,"duration":"2ms"}
+2025-10-11 18:40:38 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"1fdbd30c-e417-48b6-937c-f4468d41f567","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:40:38 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"1fdbd30c-e417-48b6-937c-f4468d41f567","method":"GET","url":"/health","statusCode":200,"duration":"3ms"}
+2025-10-11 18:41:08 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"c71d240e-bdbd-4072-af85-a9d8ca242d71","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:41:08 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"c71d240e-bdbd-4072-af85-a9d8ca242d71","method":"GET","url":"/health","statusCode":200,"duration":"3ms"}
+2025-10-11 18:41:38 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"a4492a63-90b9-4bfe-8f93-2d68cf6e8065","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:41:38 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"a4492a63-90b9-4bfe-8f93-2d68cf6e8065","method":"GET","url":"/health","statusCode":200,"duration":"4ms"}
+2025-10-11 18:42:03 [ERROR]: ❌ Redis client error: Socket closed unexpectedly {"service":"thea-backend","environment":"production"}
+Error: Socket closed unexpectedly
+    at Socket.<anonymous> (/app/node_modules/@redis/client/dist/lib/client/socket.js:194:118)
+    at Object.onceWrapper (node:events:632:26)
+    at Socket.emit (node:events:517:28)
+    at TCP.<anonymous> (node:net:350:12)
+2025-10-11 18:42:03 [INFO]: 🔄 Redis client reconnecting... {"service":"thea-backend","environment":"production"}
+2025-10-11 18:42:03 [INFO]: 🔗 Redis client connected {"service":"thea-backend","environment":"production"}
+2025-10-11 18:42:03 [INFO]: ✅ Redis client ready {"service":"thea-backend","environment":"production"}
+2025-10-11 18:42:08 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"29cf9fca-fc28-47eb-9610-979079dae933","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:42:08 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"29cf9fca-fc28-47eb-9610-979079dae933","method":"GET","url":"/health","statusCode":200,"duration":"2ms"}
+2025-10-11 18:42:38 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"40d56dc4-d093-479a-8ca3-b20991139653","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:42:38 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"40d56dc4-d093-479a-8ca3-b20991139653","method":"GET","url":"/health","statusCode":200,"duration":"2ms"}
+2025-10-11 18:43:09 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"2d4f4e87-d64c-4d1f-9ade-f949915d1597","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:43:09 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"2d4f4e87-d64c-4d1f-9ade-f949915d1597","method":"GET","url":"/health","statusCode":200,"duration":"1ms"}
+2025-10-11 18:43:39 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"9010d4b9-5c3c-46f1-8e03-65f975965067","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:43:39 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"9010d4b9-5c3c-46f1-8e03-65f975965067","method":"GET","url":"/health","statusCode":200,"duration":"1ms"}
+2025-10-11 18:44:09 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"21990a9b-98c0-4d77-a881-b6880a521f2b","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:44:09 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"21990a9b-98c0-4d77-a881-b6880a521f2b","method":"GET","url":"/health","statusCode":200,"duration":"4ms"}
+2025-10-11 18:44:39 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"4d84e330-5bb4-4a07-a0e2-b7fed56c1596","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:44:39 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"4d84e330-5bb4-4a07-a0e2-b7fed56c1596","method":"GET","url":"/health","statusCode":200,"duration":"3ms"}
+2025-10-11 18:45:09 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"857f9530-516e-4243-bccd-25f007520f90","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:45:09 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"857f9530-516e-4243-bccd-25f007520f90","method":"GET","url":"/health","statusCode":200,"duration":"1ms"}
+2025-10-11 18:45:39 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"3689f651-360d-4c86-a787-a12635a22e04","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:45:39 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"3689f651-360d-4c86-a787-a12635a22e04","method":"GET","url":"/health","statusCode":200,"duration":"2ms"}
