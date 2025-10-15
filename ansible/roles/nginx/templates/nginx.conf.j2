@@ -1,0 +1,157 @@
+# THEA Load Balancer Configuration
+# Upstream definitions for backend services
+upstream nodejs_backend {
+    least_conn;
+    server {{ primary_app_server }}:3000 max_fails=3 fail_timeout=30s;
+    server {{ backup_app_server }}:3000 backup;
+}
+
+upstream fastapi_ocr {
+    least_conn;
+    server {{ primary_app_server }}:8000 max_fails=3 fail_timeout=30s;
+    server {{ backup_app_server }}:8000 backup;
+}
+
+upstream rag_chatbot {
+    least_conn;
+    server {{ primary_app_server }}:8001 max_fails=3 fail_timeout=30s;
+    server {{ backup_app_server }}:8001 backup;
+}
+
+upstream prometheus {
+    server {{ primary_app_server }}:9090;
+}
+
+upstream grafana {
+    least_conn;
+    server {{ primary_app_server }}:3010 max_fails=3 fail_timeout=30s;
+    server {{ backup_app_server }}:3010 backup;
+}
+
+# Health check endpoint
+server {
+    listen 80 default_server;
+    server_name _;
+
+    location /health {
+        access_log off;
+        return 200 "THEA Load Balancer OK\n";
+        add_header Content-Type text/plain;
+    }
+
+    location / {
+        return 301 http://$host:3000;
+    }
+}
+
+# Node.js Backend API
+server {
+    listen 3000;
+    server_name {{ domain }} thea-loadbalancer;
+
+    client_max_body_size 50M;
+
+    location / {
+        proxy_pass http://nodejs_backend;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+    }
+
+    location /health {
+        proxy_pass http://nodejs_backend/health;
+        access_log off;
+    }
+}
+
+# FastAPI OCR Service
+server {
+    listen 8000;
+    server_name {{ domain }} thea-loadbalancer;
+
+    client_max_body_size 100M;
+
+    location / {
+        proxy_pass http://fastapi_ocr;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+        proxy_connect_timeout 300s;
+        proxy_send_timeout 300s;
+        proxy_read_timeout 300s;
+    }
+
+    location /health {
+        proxy_pass http://fastapi_ocr/health;
+        access_log off;
+    }
+}
+
+# RAG Chatbot Service
+server {
+    listen 8001;
+    server_name {{ domain }} thea-loadbalancer;
+
+    location / {
+        proxy_pass http://rag_chatbot;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    location /health {
+        proxy_pass http://rag_chatbot/health;
+        access_log off;
+    }
+}
+
+# Prometheus Monitoring
+server {
+    listen 9090;
+    server_name {{ domain }} thea-loadbalancer;
+
+    location / {
+        proxy_pass http://prometheus;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+# Grafana Dashboards
+server {
+    listen 3010;
+    server_name {{ domain }} thea-loadbalancer;
+
+    location / {
+        proxy_pass http://grafana;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}

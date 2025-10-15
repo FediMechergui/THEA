@@ -8,6 +8,17 @@ app_environment: development
 debug: true
 log_level: debug
 
+# Docker Registry Configuration
+docker_registry: localhost:5000
+use_local_registry: true
+
+# Load Balancer Configuration
+domain: thea.local
+primary_app_server: "192.168.1.10"
+backup_app_server: "192.168.1.10"
+backend_servers:
+  - "192.168.1.10"
+
 # Service Ports (local development)
 nodejs_port: 3000
 ocr_port: 8000

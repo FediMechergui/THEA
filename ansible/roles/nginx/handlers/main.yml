@@ -1,0 +1,7 @@
+---
+# Nginx Load Balancer handlers
+
+- name: restart nginx
+  service:
+    name: nginx
+    state: restarted

@@ -1,11 +1,7 @@
-version: '3.8'
-
 services:
   # Node.js Backend
   nodejs-backend:
-    build:
-      context: ./nodejs_backend
-      dockerfile: Dockerfile
+    image: localhost:5000/nodejs_backend_thea-backend:latest
     ports:
       - "{{ nodejs_port }}:3000"
     env_file:
@@ -25,9 +21,7 @@ services:
 
   # FastAPI OCR Service
   fastapi-ocr:
-    build:
-      context: ./fastapi_ocr
-      dockerfile: Dockerfile
+    image: localhost:5000/thea_fastapi-ocr:latest
     ports:
       - "{{ ocr_port }}:8000"
     env_file:
@@ -42,10 +36,8 @@ services:
     restart: unless-stopped
 
   fastapi-ocr-worker:
-    build:
-      context: ./fastapi_ocr
-      dockerfile: Dockerfile
-    command: celery -A app.services.celery_app worker --loglevel=info
+    image: localhost:5000/thea_fastapi-ocr:latest
+    command: celery -A app.worker.celery worker --loglevel=debug
     env_file:
       - ./fastapi_ocr/.env.docker
     volumes:
@@ -58,9 +50,7 @@ services:
 
   # RAG Chatbot Service
   rag-chatbot:
-    build:
-      context: ./rag_chatbot
-      dockerfile: Dockerfile
+    image: localhost:5000/rag_chatbot:latest
     ports:
       - "{{ chatbot_port }}:8001"
     env_file:
@@ -83,10 +73,8 @@ services:
     restart: unless-stopped
 
   rag-chatbot-worker:
-    build:
-      context: ./rag_chatbot
-      dockerfile: Dockerfile
-    command: celery -A app.services.celery_app worker --loglevel=info
+    image: localhost:5000/rag_chatbot:latest
+    command: celery -A app.worker.celery worker --loglevel=debug
     env_file:
       - ./rag_chatbot/.env.docker
     volumes:
@@ -103,7 +91,7 @@ services:
 
   # Shared Infrastructure Services
   mysql:
-    image: mysql:8.0
+    image: mysql:8.0-debian
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
       - MYSQL_DATABASE={{ mysql_database }}

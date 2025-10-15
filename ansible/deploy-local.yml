@@ -1,39 +1,21 @@
 ---
-# THEA Backend Microservices Deployment Playbook
-# This playbook deploys the complete THEA backend system across multiple VMs
+# THEA Partial Deployment Playbook
+# Deploys services on thea-cicd + configures thea-loadbalancer
+# Use when thea-app1 and thea-app2 are not available
 
-- name: Deploy THEA Application Services
+- name: Deploy THEA Application Services on thea-cicd
   hosts: app_servers
   become: yes
+  become_method: sudo
   gather_facts: yes
   vars_files:
     - vars/{{ env | default('development') }}.yml
     - vars/secrets.yml
+
   pre_tasks:
-    - name: Update package cache
-      apt:
-        update_cache: yes
-        cache_valid_time: 3600
-      when: ansible_os_family == "Debian"
-
-    - name: Install required packages
-      package:
-        name:
-          - curl
-          - wget
-          - git
-          - unzip
-          - python3
-          - python3-pip
-        state: present
-      when: ansible_connection != "local"
-
-    - name: Start and enable Docker service
-      service:
-        name: docker
-        state: started
-        enabled: yes
-      when: ansible_connection != "local"
+    - name: Ensure we're running locally
+      debug:
+        msg: "Deploying services on {{ inventory_hostname }} ({{ ansible_host }})"
 
   roles:
     - role: common
@@ -51,14 +33,16 @@
       delay: 10
       ignore_errors: yes
 
-    - name: Application servers deployment summary
+    - name: Application services deployment summary
       debug:
         msg:
           - "✅ THEA Application Services deployed on {{ inventory_hostname }}"
           - "📊 Services Status: {{ health_check.status | default('Unknown') }}"
-          - "🌐 Node.js Backend: http://{{ ansible_host }}:3000"
-          - "🤖 FastAPI OCR: http://{{ ansible_host }}:8000"
-          - "💬 RAG Chatbot: http://{{ ansible_host }}:8001"
+          - "🌐 Node.js Backend: http://{{ primary_app_server }}:3000"
+          - "🤖 FastAPI OCR: http://{{ primary_app_server }}:8000"
+          - "💬 RAG Chatbot: http://{{ primary_app_server }}:8001"
+          - "📈 Grafana: http://{{ primary_app_server }}:3010"
+          - "📊 Prometheus: http://{{ primary_app_server }}:9090"
 
     - name: Create deployment marker
       file:
@@ -66,7 +50,7 @@
         state: touch
         mode: '0644'
 
-# Deploy Nginx Load Balancer
+# Deploy Nginx Load Balancer on thea-loadbalancer
 - name: Deploy THEA Load Balancer
   hosts: loadbalancer_servers
   become: yes
@@ -74,6 +58,14 @@
   vars_files:
     - vars/{{ env | default('development') }}.yml
     - vars/secrets.yml
+
+  pre_tasks:
+    - name: Display load balancer configuration
+      debug:
+        msg:
+          - "Configuring load balancer on {{ inventory_hostname }}"
+          - "Primary backend: {{ primary_app_server }}"
+          - "Backup backend: {{ backup_app_server }}"
 
   tasks:
     - name: Update package cache
@@ -101,11 +93,14 @@
         msg:
           - "🎉 THEA Load Balancer deployed successfully!"
           - "🔀 Load Balancer: http://{{ ansible_host }}"
-          - "🎯 Primary App Server: {{ primary_app_server }}"
-          - "🔄 Backup App Server: {{ backup_app_server }}"
-          - "📊 Access services through:"
+          - "🎯 Backend Server: {{ primary_app_server }}"
+          - ""
+          - "📊 Access services through load balancer:"
           - "  - Node.js API: http://{{ ansible_host }}:3000"
           - "  - OCR Service: http://{{ ansible_host }}:8000"
           - "  - Chatbot: http://{{ ansible_host }}:8001"
           - "  - Grafana: http://{{ ansible_host }}:3010"
           - "  - Prometheus: http://{{ ansible_host }}:9090"
+          - ""
+          - "📝 Note: Currently using thea-cicd as backend"
+          - "📝 When app1/app2 are ready, update inventory.ini and redeploy"

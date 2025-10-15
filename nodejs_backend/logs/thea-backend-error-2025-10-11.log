@@ -10,3 +10,9 @@ Error: Socket closed unexpectedly
     at Object.onceWrapper (node:events:632:26)
     at Socket.emit (node:events:517:28)
     at TCP.<anonymous> (node:net:350:12)
+2025-10-11 18:47:04 [ERROR]: ❌ Redis client error: Socket closed unexpectedly {"service":"thea-backend","environment":"production"}
+Error: Socket closed unexpectedly
+    at Socket.<anonymous> (/app/node_modules/@redis/client/dist/lib/client/socket.js:194:118)
+    at Object.onceWrapper (node:events:632:26)
+    at Socket.emit (node:events:517:28)
+    at TCP.<anonymous> (node:net:350:12)

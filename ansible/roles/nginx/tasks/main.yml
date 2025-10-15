@@ -1,0 +1,49 @@
+---
+# Nginx Load Balancer tasks for THEA
+
+# Skip installation - Nginx already installed
+# - name: Install Nginx
+#   package:
+#     name: nginx
+#     state: present
+#     update_cache: yes
+
+- name: Remove default Nginx configuration
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Create Nginx configuration directory
+  file:
+    path: /etc/nginx/conf.d
+    state: directory
+    mode: '0755'
+
+- name: Copy Nginx load balancer configuration
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/conf.d/thea-loadbalancer.conf
+    mode: '0644'
+  notify: restart nginx
+
+- name: Ensure Nginx is started and enabled
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Test Nginx configuration
+  shell: nginx -t
+  register: nginx_test
+  changed_when: false
+
+- name: Wait for Nginx to be ready
+  uri:
+    url: "http://{{ ansible_host }}:80"
+    method: GET
+    status_code: [200, 502, 503]
+  register: nginx_check
+  until: nginx_check.status in [200, 502, 503]
+  retries: 10
+  delay: 3
+  ignore_errors: yes

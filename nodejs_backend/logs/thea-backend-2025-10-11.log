@@ -107,3 +107,21 @@ Error: Socket closed unexpectedly
 2025-10-11 18:45:09 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"857f9530-516e-4243-bccd-25f007520f90","method":"GET","url":"/health","statusCode":200,"duration":"1ms"}
 2025-10-11 18:45:39 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"3689f651-360d-4c86-a787-a12635a22e04","method":"GET","url":"/health","ip":"::1"}
 2025-10-11 18:45:39 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"3689f651-360d-4c86-a787-a12635a22e04","method":"GET","url":"/health","statusCode":200,"duration":"2ms"}
+2025-10-11 18:46:10 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"f57c193e-08c8-4b6e-a2d8-04a6e0c5652e","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:46:10 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"f57c193e-08c8-4b6e-a2d8-04a6e0c5652e","method":"GET","url":"/health","statusCode":200,"duration":"3ms"}
+2025-10-11 18:46:40 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"02a98056-e5a4-4d7d-97e4-090040516450","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:46:40 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"02a98056-e5a4-4d7d-97e4-090040516450","method":"GET","url":"/health","statusCode":200,"duration":"1ms"}
+2025-10-11 18:47:04 [ERROR]: ❌ Redis client error: Socket closed unexpectedly {"service":"thea-backend","environment":"production"}
+Error: Socket closed unexpectedly
+    at Socket.<anonymous> (/app/node_modules/@redis/client/dist/lib/client/socket.js:194:118)
+    at Object.onceWrapper (node:events:632:26)
+    at Socket.emit (node:events:517:28)
+    at TCP.<anonymous> (node:net:350:12)
+2025-10-11 18:47:04 [INFO]: 🔄 Redis client reconnecting... {"service":"thea-backend","environment":"production"}
+2025-10-11 18:47:04 [INFO]: 🔗 Redis client connected {"service":"thea-backend","environment":"production"}
+2025-10-11 18:47:04 [INFO]: ✅ Redis client ready {"service":"thea-backend","environment":"production"}
+2025-10-11 18:47:10 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"4c32e1c3-bc6c-40a5-88c0-f9eaf1e7066e","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:47:10 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"4c32e1c3-bc6c-40a5-88c0-f9eaf1e7066e","method":"GET","url":"/health","statusCode":200,"duration":"2ms"}
+2025-10-11 18:47:40 [INFO]: Incoming request {"service":"thea-backend","environment":"production","requestId":"1ca20f6f-4cd5-4e64-84d3-e290d00a3fa5","method":"GET","url":"/health","ip":"::1"}
+2025-10-11 18:47:40 [INFO]: Request completed {"service":"thea-backend","environment":"production","requestId":"1ca20f6f-4cd5-4e64-84d3-e290d00a3fa5","method":"GET","url":"/health","statusCode":200,"duration":"1ms"}
+2025-10-11 18:47:43 [INFO]: SIGTERM received, shutting down services... {"service":"thea-backend","environment":"production"}

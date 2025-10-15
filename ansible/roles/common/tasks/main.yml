@@ -59,12 +59,14 @@
       - rule: allow
         port: '443'
         proto: tcp
+  when: ansible_connection != "local" and env != "development"
 
 - name: Allow THEA service ports
   ufw:
     rule: allow
     port: "{{ item }}"
     proto: tcp
+  when: ansible_connection != "local" and env != "development"
   loop:
     - '3000'  # Node.js Backend
     - '8000'  # FastAPI OCR

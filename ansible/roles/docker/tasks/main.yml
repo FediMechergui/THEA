@@ -1,43 +1,67 @@
 ---
 # Docker deployment tasks for THEA
 
+- name: Create application directories
+  file:
+    path: "/opt/thea/{{ item }}"
+    state: directory
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+  loop:
+    - nodejs_backend
+    - fastapi_ocr
+    - fastapi_ocr/uploads
+    - rag_chatbot
+    - rag_chatbot/data
+
 - name: Copy docker-compose.yml
   template:
     src: templates/docker-compose.yml.j2
     dest: /opt/thea/docker-compose.yml
     mode: '0644'
-    owner: ubuntu
-    group: ubuntu
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
 
 - name: Copy environment files
   template:
     src: "templates/{{ item }}.j2"
     dest: "/opt/thea/{{ item }}"
     mode: '0644'
-    owner: ubuntu
-    group: ubuntu
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
   loop:
     - nodejs_backend/.env.docker
     - fastapi_ocr/.env.docker
     - rag_chatbot/.env.docker
 
-- name: Create Docker networks
-  docker_network:
-    name: "{{ item }}"
-    driver: bridge
-    state: present
-  loop:
-    - thea-network
-    - monitoring
+- name: Copy prometheus configuration
+  copy:
+    src: "{{ playbook_dir }}/../prometheus.yml"
+    dest: /opt/thea/prometheus.yml
+    mode: '0644'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+  when: prometheus_metrics_enabled | default(true)
 
-- name: Pull Docker images
+# Networks are created automatically by docker-compose
+# - name: Create Docker networks
+#   docker_network:
+#     name: "{{ item }}"
+#     driver: bridge
+#     state: present
+#   loop:
+#     - thea-network
+#     - monitoring
+
+- name: Pull Docker infrastructure images
   docker_image:
     name: "{{ item.name }}"
     tag: "{{ item.tag | default('latest') }}"
     source: pull
     state: present
   loop:
-    - { name: 'mysql', tag: '8.0' }
+    - { name: 'mysql', tag: '8.0-debian' }
     - { name: 'postgres', tag: '13-alpine' }
     - { name: 'redis', tag: 'alpine' }
     - { name: 'rabbitmq', tag: '3-management' }
@@ -46,34 +70,35 @@
     - { name: 'ollama/ollama' }
     - { name: 'prom/prometheus' }
     - { name: 'grafana/grafana' }
-    - { name: 'thea_backend-nodejs-backend' }
-    - { name: 'thea_backend-fastapi-ocr' }
-    - { name: 'thea_backend-rag-chatbot' }
 
-- name: Start Docker services
-  docker_compose:
-    project_src: /opt/thea
-    state: present
-    pull: yes
-    remove_orphans: yes
-
-- name: Wait for services to be healthy
-  docker_container_info:
+- name: Pull THEA microservices from local registry
+  docker_image:
     name: "{{ item }}"
+    source: pull
+    state: present
+  loop:
+    - 'localhost:5000/nodejs_backend_thea-backend:latest'
+    - 'localhost:5000/thea_fastapi-ocr:latest'
+    - 'localhost:5000/rag_chatbot:latest'
+  when: env == "development"
+
+- name: Start Docker services with docker compose
+  shell: |
+    cd /opt/thea
+    docker compose up -d --remove-orphans
+  args:
+    executable: /bin/bash
+  become: yes
+  become_user: "{{ ansible_user }}"
+
+- name: Wait for MySQL to be healthy
+  docker_container_info:
+    name: "thea-mysql-1"
   register: container_info
-  until: "container_info.container.State.Health.Status == 'healthy'"
+  until: "container_info.exists and container_info.container.State.Status == 'running'"
   retries: 30
   delay: 10
-  loop:
-    - thea_backend-mysql-1
-    - thea_backend-nodejs-backend-1
-
-- name: Configure Docker service restart policy
-  docker_container:
-    name: "{{ item }}"
-    restart_policy: unless-stopped
-    state: present
-  loop: "{{ docker_containers }}"
+  ignore_errors: yes
 
 - name: Set up Docker cleanup cron job
   cron:
